@@ -4,7 +4,7 @@ project(nyasRayTracing LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 
-set(GLM_DIR "D:/C--/glm-0.9.9.8")       # set glm path
+set(GLM_DIR "./third-party/glm-0.9.9.8")       # set glm path
 if (NOT EXISTS ${GLM_DIR})
     message("Please set your own 'glm' path")
 endif()

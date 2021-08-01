@@ -1,16 +1,15 @@
 #include <iostream>
 
-//#include "glm/glm.hpp"
+#include "glm/glm.hpp"
 #include "../include/common/types.h"
 #include "../include/common/functions.h"
+#include "../include/common/fast_inversesqrt.h"
 
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-
-    nyas::Point3D ccc(1.);
-
-    double ctct = nyas::length2(ccc);
-
-    std::cout << ccc.x << ' ' << ctct << std::endl;
+    // testing fast inversesqrt error
+    nyas::vec<4, nyas::float64, glm::qualifier::defaultp> ccc(2., 3., 4., 5.);
+    //ccc = nyas::inversesqrt(ccc);
+    //ccc = nyas::normalize(ccc);
+    //std::cout << ccc.x << ' ' << ccc.y << ' ' << ccc.z << ' ' << ccc.w << std::endl;
 }

@@ -6,6 +6,17 @@
 
 namespace nyas
 {
+    using ::glm::uint;
+    using ::glm::uint8;
+    using ::glm::uint16;
+    using ::glm::uint32;
+    using ::glm::uint64;
+
+    using ::glm::int8;
+    using ::glm::int16;
+    using ::glm::int32;
+    using ::glm::int64;
+
     typedef float  float32;
     typedef double float64;
 
