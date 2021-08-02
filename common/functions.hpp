@@ -32,6 +32,7 @@ namespace nyas
 
 
     using ::glm::sqrt;
+    using ::glm::pow;
     using ::glm::clamp;
 
     using ::glm::dot;
