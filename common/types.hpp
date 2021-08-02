@@ -1,4 +1,4 @@
-/// @file include/common/types.h
+/// @file common/types.hpp
 #pragma once
 
 #include "glm/glm.hpp"
@@ -23,8 +23,9 @@ namespace nyas
     typedef ::glm::length_t length_t;
     using ::glm::vec;
 
-    typedef vec<3, float64> Point3D;
-    typedef vec<3, float64> Vector3D;
-    typedef vec<3, float32> RGBColor;
+    typedef vec<3, float64>  Point3D;
+    typedef vec<3, float64>  Vector3D;
+    typedef vec<3, float32>  RGBColor;
+    typedef vec<2, length_t> Length2D;
 
 } // namespace nyas

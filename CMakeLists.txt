@@ -1,23 +1,23 @@
-cmake_minimum_required(VERSION 3.18)
-project(nyasRayTracing LANGUAGES CXX)
-
+cmake_minimum_required(VERSION 3.0.0)
+project(nyasRayTracing)
 set(CMAKE_CXX_STANDARD 20)
 
+include(CTest)
+enable_testing()
 
-set(GLM_DIR "./third-party/glm-0.9.9.8")       # set glm path
+add_executable(nyasRayTracing main.cpp)
+
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+include(CPack)
+
+
+# glm path
+# glm project: https://github.com/g-truc/glm
+set(GLM_DIR ${PROJECT_SOURCE_DIR}/third-party/glm-0.9.9.8)
+
+
 if (NOT EXISTS ${GLM_DIR})
-    message("Please set your own 'glm' path")
+    message("Please set your own `glm` path")
 endif()
 include_directories(${GLM_DIR})
-
-
-file(GLOB_RECURSE NYAS_INCLUDES "./include/*.h")
-source_group("NYAS Files" FILES ${NYAS_INCLUDES})
-
-#file(GLOB_RECURSE NYAS_INLINES "./inline/*.inl")
-#source_group("NYAS Files" FILES ${NYAS_INLINES})
-
-file(GLOB_RECURSE NYAS_SOURCES "./source/*.cpp")
-source_group("NYAS Files" FILES ${NYAS_SOURCES})
-
-add_executable(nyasRayTracing ${NYAS_SOURCES})
