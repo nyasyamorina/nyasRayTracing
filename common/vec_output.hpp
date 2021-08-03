@@ -10,40 +10,40 @@ namespace nyas
     {
         char const* const commaspace = ", ";
 
-        template<length_t L, typename T, glm::qualifier Q>
+        template<length_t L, typename T>
         struct vec_output;
 
-        template<typename T, glm::qualifier Q>
-        struct vec_output<1, T, Q>
+        template<typename T>
+        struct vec_output<1, T>
         {
-            ::std::ostream static inline & call(::std::ostream & out, vec<1, T, Q> const& v)
+            ::std::ostream static inline & call(::std::ostream & out, vec<1, T> const& v)
             {
                 return out << '[' << v.x << ']';
             }
         };
 
-        template<typename T, glm::qualifier Q>
-        struct vec_output<2, T, Q>
+        template<typename T>
+        struct vec_output<2, T>
         {
-            ::std::ostream static inline & call(::std::ostream & out, vec<2, T, Q> const& v)
+            ::std::ostream static inline & call(::std::ostream & out, vec<2, T> const& v)
             {
                 return out << '[' << v.x << commaspace << v.y << ']';
             }
         };
 
-        template<typename T, glm::qualifier Q>
-        struct vec_output<3, T, Q>
+        template<typename T>
+        struct vec_output<3, T>
         {
-            ::std::ostream static inline & call(::std::ostream & out, vec<3, T, Q> const& v)
+            ::std::ostream static inline & call(::std::ostream & out, vec<3, T> const& v)
             {
                 return out << '[' << v.x << commaspace << v.y << commaspace << v.z << ']';
             }
         };
 
-        template<typename T, glm::qualifier Q>
-        struct vec_output<4, T, Q>
+        template<typename T>
+        struct vec_output<4, T>
         {
-            ::std::ostream static inline & call(::std::ostream & out, vec<4, T, Q> const& v)
+            ::std::ostream static inline & call(::std::ostream & out, vec<4, T> const& v)
             {
                 return out << '[' << v.x << commaspace << v.y << commaspace << v.z << commaspace << v.w << ']';
             }
@@ -53,8 +53,8 @@ namespace nyas
 } // namespace nyas
 
 
-template<nyas::length_t L, typename T, glm::qualifier Q>
-std::ostream inline & operator<<(std::ostream & out, nyas::vec<L, T, Q> const& v)
+template<nyas::length_t L, typename T>
+std::ostream inline & operator<<(std::ostream & out, nyas::vec<L, T> const& v)
 {
-    return nyas::_detail::vec_output<L, T, Q>::call(out, v);
+    return nyas::_detail::vec_output<L, T>::call(out, v);
 }

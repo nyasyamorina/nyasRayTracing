@@ -4,32 +4,11 @@
 #include "glm/glm.hpp"
 #include "types.hpp"
 #include "fast_inversesqrt.hpp"
-#include <limits>
 
 
 namespace nyas
 {
-    /// is 'T' a floating-point type? (float/double/long double)
-    template<typename T>
-    bool constexpr inline is_float()
-    {
-        return std::numeric_limits<T>::is_iec559;
-    }
-
-    /// is 'T' a integer type? (bool/short/int/long/long long)
-    template<typename T>
-    bool constexpr inline is_integer()
-    {
-        return std::numeric_limits<T>::is_integer;
-    }
-
-    /// is 'T' a number type? (floting-point or integer)
-    template<typename T>
-    bool constexpr is_number()
-    {
-        return is_float<T>() || is_integer<T>();
-    }
-
+    /* using math functions already in glm */
 
     using ::glm::sqrt;
     using ::glm::pow;
@@ -40,12 +19,23 @@ namespace nyas
     using ::glm::length;
     using ::glm::distance;
 
+
+    /* define new math functions */
+
+    template<length_t L, typename T>
+    vec<L, T> inline pow(vec<L, T> const& v, T exponent)
+    {
+        static_assert(is_float<T>(), "'pow' accepts only floating-point input");
+        return pow(v, vec<L, T>(exponent));
+    }
+
+
     /// Return squared vector length, i.e., dot(vector, vector)
     ///
     /// @tparam L dimension of 'vec', must be in the 1 to 4 range
     /// @tparam T type of vector data, must be floating-point
-    template<length_t L, typename T, glm::qualifier Q>
-    T length2(vec<L, T, Q> const& v)
+    template<length_t L, typename T>
+    T inline length2(vec<L, T> const& v)
     {
         return dot(v, v);
     }
@@ -55,42 +45,42 @@ namespace nyas
 
     namespace _detail   // ! user should not use namespace '_detail'
     {
-        template<length_t L, typename T, glm::qualifier Q>
+        template<length_t L, typename T>
         struct fast_inversesqrt_vec;
 
-        template<typename T, glm::qualifier Q>
-        struct fast_inversesqrt_vec<1, T, Q>
+        template<typename T>
+        struct fast_inversesqrt_vec<1, T>
         {
-            vec<1, T, Q> static inline call(vec<1, T, Q> const& v)
+            vec<1, T> static inline call(vec<1, T> const& v)
             {
-                return vec<1, T, Q>(inversesqrt(v.x));
+                return vec<1, T>(inversesqrt(v.x));
             }
         };
 
-        template<typename T, glm::qualifier Q>
-        struct fast_inversesqrt_vec<2, T, Q>
+        template<typename T>
+        struct fast_inversesqrt_vec<2, T>
         {
-            vec<2, T, Q> static inline call(vec<2, T, Q> const& v)
+            vec<2, T> static inline call(vec<2, T> const& v)
             {
-                return vec<2, T, Q>(inversesqrt(v.x), inversesqrt(v.y));
+                return vec<2, T>(inversesqrt(v.x), inversesqrt(v.y));
             }
         };
 
-        template<typename T, glm::qualifier Q>
-        struct fast_inversesqrt_vec<3, T, Q>
+        template<typename T>
+        struct fast_inversesqrt_vec<3, T>
         {
-            vec<3, T, Q> static inline call(vec<3, T, Q> const& v)
+            vec<3, T> static inline call(vec<3, T> const& v)
             {
-                return vec<3, T, Q>(inversesqrt(v.x), inversesqrt(v.y), inversesqrt(v.z));
+                return vec<3, T>(inversesqrt(v.x), inversesqrt(v.y), inversesqrt(v.z));
             }
         };
 
-        template<typename T, glm::qualifier Q>
-        struct fast_inversesqrt_vec<4, T, Q>
+        template<typename T>
+        struct fast_inversesqrt_vec<4, T>
         {
-            vec<4, T, Q> static inline call(vec<4, T, Q> const& v)
+            vec<4, T> static inline call(vec<4, T> const& v)
             {
-                return vec<4, T, Q>(inversesqrt(v.x), inversesqrt(v.y), inversesqrt(v.z), inversesqrt(v.w));
+                return vec<4, T>(inversesqrt(v.x), inversesqrt(v.y), inversesqrt(v.z), inversesqrt(v.w));
             }
         };
 
@@ -101,11 +91,11 @@ namespace nyas
     /// @tparam L dimension of 'vec', must be in the 1 to 4 range
     /// @tparam T type of vector data, must be floating-point
     /// @param v inversesqrt function is defined for input values of v defined in the range [0, inf+)
-    template<length_t L, typename T, glm::qualifier Q>
-    vec<L, T, Q> inversesqrt(vec<L, T, Q> const& v)
+    template<length_t L, typename T>
+    vec<L, T> inline inversesqrt(vec<L, T> const& v)
     {
         static_assert(is_float<T>(), "'inversesqrt' accepts only floating-point inputs");
-        return _detail::fast_inversesqrt_vec<L, T, Q>::call(v);
+        return _detail::fast_inversesqrt_vec<L, T>::call(v);
     }
 
     /// Returns a vector in the same direction as x but with length of 1.
@@ -113,8 +103,8 @@ namespace nyas
 	///
 	/// @tparam L An integer between 1 and 4 included that qualify the dimension of the vector.
 	/// @tparam T Floating-point scalar types.
-	template<length_t L, typename T, glm::qualifier Q>
-    vec<L, T, Q> inline normalize(vec<L, T, Q> const& x)
+	template<length_t L, typename T>
+    vec<L, T> inline normalize(vec<L, T> const& x)
     {
         static_assert(is_float<T>(), "'normalize' accepts only floating-point inputs");
         return x * inversesqrt(length2(x));

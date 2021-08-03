@@ -8,15 +8,31 @@ Target: A fully functional render process.
 
 ---
 
-## Now
+## Update Log
 
-It can render and output a simple [image](./outputs/gradient_color.bmp).
+### 03-08-21
 
-Run `main.cpp` to show this example.
++ Fixed error `there are no arguments to 'is_float' that depend on a template parameter` with `G++` compiler.
+
++ To fix warning `compound assignment with 'volatile'-qualified left operand is deprecated`, you must manually changing `f*=f` to `f=f*f` in glm file `glm/detail/type_half.inl:9`.
+
++ Unuse `::glm::qualifier` in exposed template type `vec`.
+
++ Add `examples.hpp`.
+
+### 02-08-21
+
++ Refactored directories, see `Need some Helps` on bottom.
+
++ Added 2D graphics buffer in `GraphicsBuffer.hpp`. now it can render and output a simple [image](./outputs/gradient_color.bmp).
+
+### 01-08-21
+
++ Added fast inverse square root in `common/fast_inversesqrt.h`.
 
 ---
 
-Use third-party libraries [glm](https://github.com/g-truc/glm) to provide math support.
+**Using third-party libraries [glm](https://github.com/g-truc/glm) to provide math support.**
 
 ---
 

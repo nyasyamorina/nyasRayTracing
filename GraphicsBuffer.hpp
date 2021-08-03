@@ -17,27 +17,27 @@ namespace nyas
     class GraphicsBuffer
     {
     public:
-        typedef vec<3, T, glm::qualifier::defaultp> Data;
+        typedef vec<3, T> Data;
 
+        /* Constructors */
         GraphicsBuffer()
             : _size(0)
             , _data_ptr(nullptr)
         {}
-        GraphicsBuffer(length_t width, length_t height)
+        explicit GraphicsBuffer(length_t width, length_t height)
             : _size(width, height)
-        {
-            _data_ptr = new Data[width * height];
-        }
-        GraphicsBuffer(Length2D size)
+            , _data_ptr(new Data[width * height])
+        {}
+        explicit GraphicsBuffer(Length2D size)
             : _size(size)
-        {
-            _data_ptr = new Data[size.x * size.y];
-        }
+            , _data_ptr(new Data[size.x * size.y])
+        {}
 
-        /// @see GraphicsBuffer.h[102]
+        /// @see GraphicsBuffer.h[149]
         //GraphicsBuffer(GraphicsBuffer const&) = default;
         //GraphicsBuffer & operator=(GraphicsBuffer const&) = default;
 
+        /* Destructor */
         ~GraphicsBuffer()
         {
             delete[] _data_ptr;
@@ -46,6 +46,13 @@ namespace nyas
         }
 
 
+        // Test graphics buffer is valid or not
+        bool inline valid() const
+        {
+            return _data_ptr != nullptr;
+        }
+
+        /* getting size */
         length_t inline width() const
         {
             return _size.x;
@@ -59,37 +66,40 @@ namespace nyas
             return _size;
         }
 
+        /* getting data pointer */
         Data inline * data_pointer()
         {
             return _data_ptr;
         }
-
         Data inline const* data_pointer() const
         {
             return _data_ptr;
         }
 
-        Data & operator()(length_t w, length_t h)
+        /* accessing data */
+        Data inline & operator()(length_t w, length_t h)
         {
             assert((0 <= w && w < _size.x) &&( 0 <= h && h < _size.y));
             return *(_data_ptr + (w + _size.x * h));
         }
-        Data & operator()(Length2D const& pos)
+        Data inline & operator()(Length2D const& pos)
         {
             assert((0 <= pos.x && pos.x < _size.x) &&( 0 <= pos.y && pos.y < _size.y));
             return *(_data_ptr + (pos.x + _size.x * pos.y));
         }
-        Data const& operator()(length_t w, length_t h) const
+        Data inline const& operator()(length_t w, length_t h) const
         {
             assert((0 <= w && w < _size.x) &&( 0 <= h && h < _size.y));
             return *(_data_ptr + (w + _size.x * h));
         }
-        Data const& operator()(Length2D const& pos) const
+        Data inline const& operator()(Length2D const& pos) const
         {
             assert((0 <= pos.x && pos.x < _size.x) &&( 0 <= pos.y && pos.y < _size.y));
             return *(_data_ptr + (pos.x + _size.x * pos.y));
         }
 
+
+        /* applying function on data */
         /// Apply 'func' to each elements in buffer
         void for_each(std::function<void(Data &)> func)
         {
@@ -99,7 +109,7 @@ namespace nyas
                 func(*(iter++));
             }
         }
-        // TODO: void for_each_multithreads(void(& func)(Data &));
+        // TODO: void for_each_multithreads(std::function<void(Data &)> func);
 
         /// Apply 'func' for all elements index and write result into buffer
         ///
@@ -130,9 +140,11 @@ namespace nyas
             }
         }
 
-
         // TODO: void for_each_index_multithreads(std::function<void(length_t, length_t, Data &)> func)
         // TODO: void for_each_index_multithreads(std::function<void(Length2D const&, Data &)> func)
+
+
+        /* changing data type */
 
         // ! it will delete _data_ptr array when return buffer
         // ? how to return a "shared_ptr-like" array
