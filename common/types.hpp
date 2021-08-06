@@ -24,9 +24,11 @@ namespace nyas
     typedef ::glm::length_t length_t;
     template<length_t L, typename T> using vec = ::glm::vec<L, T, ::glm::qualifier::defaultp>;
 
+    typedef vec<2, float64>  Point2D;
     typedef vec<3, float64>  Point3D;
     typedef vec<3, float64>  Vector3D;
     typedef vec<3, float32>  RGBColor;
+    typedef vec<3, uint8>    DisplayRGBColor;
     typedef vec<2, length_t> Length2D;
 
 

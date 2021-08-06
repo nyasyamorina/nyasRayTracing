@@ -6,6 +6,8 @@
 #include <fstream>
 #include <functional>
 
+#define GBUFF_CHECK_WRITING_DATA
+
 
 namespace nyas
 {
@@ -16,8 +18,11 @@ namespace nyas
     template<typename T>
     class GraphicsBuffer
     {
+        static_assert(is_number<T>(), "'GraphicsBuffer' accepts only floating-point or integer");
+
     public:
         typedef vec<3, T> Data;
+
 
         /* Constructors */
         GraphicsBuffer()
@@ -32,10 +37,22 @@ namespace nyas
             : _size(size)
             , _data_ptr(new Data[size.x * size.y])
         {}
+        GraphicsBuffer(GraphicsBuffer<T> const& buff)
+        {
+            _copy_from(buff);
+        }
 
-        /// @see GraphicsBuffer.h[149]
-        //GraphicsBuffer(GraphicsBuffer const&) = default;
-        //GraphicsBuffer & operator=(GraphicsBuffer const&) = default;
+        GraphicsBuffer<T> & operator=(GraphicsBuffer<T> const& buff)
+        {
+            _copy_from(buff);
+            return *this;
+        }
+        GraphicsBuffer<T> & operator=(GraphicsBuffer<T> && buff)
+        {
+            std::swap(_size, buff._size);
+            std::swap(_data_ptr, buff._data_ptr);
+            return *this;
+        }
 
         /* Destructor */
         ~GraphicsBuffer()
@@ -60,6 +77,10 @@ namespace nyas
         length_t inline height() const
         {
             return _size.y;
+        }
+        length_t inline total() const
+        {
+            return _size.x * _size.y;
         }
         Length2D inline size() const
         {
@@ -101,19 +122,43 @@ namespace nyas
 
         /* applying function on data */
         /// Apply 'func' to each elements in buffer
+        ///
+        /// @param func accepts 'Graphics<Y>::Data &' input, and returns 'void'
         void for_each(std::function<void(Data &)> func)
         {
             Data * iter = _data_ptr;
-            length_t const total_data = _size.x * _size.y;
+            length_t const total_data = total();
             for (length_t i = 0; i < total_data; ++i) {
                 func(*(iter++));
             }
         }
-        // TODO: void for_each_multithreads(std::function<void(Data &)> func);
+
+        /// Apply 'func' to each elements and return results in buffer
+        ///
+        /// @tparam U 'func' returned data type, must be floating-point or integer
+        /// @param func accepts 'GraphicsBuffer<T>::Data const&' input, and returns 'GraphicsBuffer<U>::Data'
+        template<typename U>
+        GraphicsBuffer<U> map(std::function<vec<3, U>(Data const&)> func) const
+        {
+            GraphicsBuffer<U> new_buff(_size);
+#ifdef GBUFF_CHECK_WRITING_DATA
+            if (new_buff.valid()) {
+#endif
+                auto new_data_ptr = new_buff.data_pointer();
+                Data * old_data_ptr = _data_ptr;
+                length_t const totoal_data = total();
+                for (length_t i = 0; i < totoal_data; ++i) {
+                    *(new_data_ptr++) = func(*(old_data_ptr++));
+                }
+#ifdef GBUFF_CHECK_WRITING_DATA
+            }
+#endif
+            return new_buff;
+        }
 
         /// Apply 'func' for all elements index and write result into buffer
         ///
-        /// @param func function parameters are 'w' and 'h'
+        /// @param func accepts 'length_t', 'length_t', 'Graphics<Y>::Data &', and returns 'void'
         void for_each_index(std::function<void(length_t, length_t, Data &)> func)
         {
             Data * iter = _data_ptr;
@@ -126,7 +171,7 @@ namespace nyas
 
         /// Apply 'func' for all elements index and write result into buffer
         ///
-        /// @param func function parameters are 'w_h'
+        /// @param func accepts 'Length2D const&', 'Graphics<Y>::Data &', and returns 'void'
         void for_each_index(std::function<void(Length2D const&, Data &)> func)
         {
             Data * iter = _data_ptr;
@@ -140,28 +185,37 @@ namespace nyas
             }
         }
 
+        // TODO: void for_each_multithreads(std::function<void(Data &)> func);
+        // TODO: template<typename U> GraphicsBuffer<U> map_multithreads(std::function<vec<3, U>(Data const&)> func) const
         // TODO: void for_each_index_multithreads(std::function<void(length_t, length_t, Data &)> func)
         // TODO: void for_each_index_multithreads(std::function<void(Length2D const&, Data &)> func)
 
 
         /* changing data type */
 
-        // ! it will delete _data_ptr array when return buffer
-        // ? how to return a "shared_ptr-like" array
-        ////template<typename U>
-        ////GraphicsBuffer<U> cast() const
-        ////{
-        ////    GraphicsBuffer<U> new_buffer(_size);
-        ////    auto new_data_ptr = new_buffer.data_pointer();
-        ////    Data * old_data_ptr = _data_ptr;
-        ////    length_t const total_data = _size.x * _size.y;
-        ////    for (length_t i = 0; i < total_data; ++i) {
-        /////        *(new_data_ptr++) = *(old_data_ptr++);
-        ////    }
-        ////    return new_buffer;
-        ////}
+        /// cast data to different type
+        ///
+        /// @tparam U new data type
+        template<typename U>
+        GraphicsBuffer<U> cast() const
+        {
+            GraphicsBuffer<U> new_buffer(_size);
+#ifdef GBUFF_CHECK_WRITING_DATA
+            if (new_buffer.valid()) {
+#endif
+                auto new_data_ptr = new_buffer.data_pointer();
+                Data * old_data_ptr = _data_ptr;
+                length_t const total_data = total();
+                for (length_t i = 0; i < total_data; ++i) {
+                    *(new_data_ptr++) = *(old_data_ptr++);
+                }
+#ifdef GBUFF_CHECK_WRITING_DATA
+            }
+#endif
+            return new_buffer;
+        }
 
-        /// Wirte data into new buffer
+        /// Wirte data into different data type buffer
         ///
         /// @tparam U data type in new buffer
         /// @param buff size of new buffer must equal this size
@@ -169,12 +223,18 @@ namespace nyas
         GraphicsBuffer<U> & cast(GraphicsBuffer<U> & buff) const
         {
             assert(buff.size() == _size);
-            auto new_data_ptr = buff.data_pointer();
-            Data * old_data_ptr = _data_ptr;
-            length_t const total_data = _size.x * _size.y;
-            for (length_t i = 0; i < total_data; ++i) {
-                *(new_data_ptr++) = *(old_data_ptr++);
+#ifdef GBUFF_CHECK_WRITING_DATA
+            if (buff.valid()) {
+#endif
+                auto new_data_ptr = buff.data_pointer();
+                Data * old_data_ptr = _data_ptr;
+                length_t const total_data = total();
+                for (length_t i = 0; i < total_data; ++i) {
+                    *(new_data_ptr++) = *(old_data_ptr++);
+                }
+#ifdef GBUFF_CHECK_WRITING_DATA
             }
+#endif
             return buff;
         }
 
@@ -182,6 +242,25 @@ namespace nyas
     private:
         Length2D _size;
         Data * _data_ptr;
+
+        void _copy_from(GraphicsBuffer<T> const& buff)
+        {
+            _size = buff._size;
+            delete[] _data_ptr;
+            length_t const total_data = total();
+            _data_ptr = new Data[total_data];
+#ifdef GBUFF_CHECK_WRITING_DATA
+            if (_data_ptr != nullptr) {
+#endif
+                Data * old_data_ptr = buff._data_ptr;
+                Data * new_data_ptr = _data_ptr;
+                for (length_t i = 0; i < total_data; ++i) {
+                    *(new_data_ptr++) = *(old_data_ptr);
+                }
+#ifdef GBUFF_CHECK_WRITING_DATA
+            }
+#endif
+        }
     };
 
 
@@ -255,6 +334,14 @@ namespace nyas
         }
 
         outfile.close();
+    }
+
+
+    /// Mapping floating-point color to display color
+    DisplayRGBColor to_display(RGBColor const& color)
+    {
+        // pow(color, 1/2.2) is for gamma correction (https://en.wikipedia.org/wiki/Gamma_correction)
+        return DisplayRGBColor(clamp(255.f * pow(color, 1.f/2.2f), 0.f, 255.f));
     }
 
 } // namespace nyas

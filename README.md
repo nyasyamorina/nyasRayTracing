@@ -10,6 +10,14 @@ Target: A fully functional render process.
 
 ## Update Log
 
+### 06-08-21
+
++ Add rvalue reference in `GraphicsBuffer`, and add method `cast<U>` and `map<U>`.
+
++ Make example `example_rendering_output` easier.
+
++ Add `samplers`.
+
 ### 03-08-21
 
 + Fixed error `there are no arguments to 'is_float' that depend on a template parameter` with `G++` compiler.
