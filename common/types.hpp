@@ -18,8 +18,9 @@ namespace nyas
     using ::glm::int32;
     using ::glm::int64;
 
-    typedef float  float32;
-    typedef double float64;
+    typedef float       float32;
+    typedef double      float64;
+    typedef long double float128;
 
     typedef ::glm::length_t length_t;
     template<length_t L, typename T> using vec = ::glm::vec<L, T, ::glm::qualifier::defaultp>;

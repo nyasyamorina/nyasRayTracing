@@ -5,7 +5,10 @@
 #include "common/functions.hpp"
 #include "common/vec_output.hpp"
 #include "GraphicsBuffer.hpp"
-
+#include "samplers/Sampler.hpp"
+#include "samplers/Regular.hpp"
+#include "samplers/PureRandom.hpp"
+#include "samplers/Jittered.hpp"
 #include <iostream>
 
 
@@ -39,10 +42,10 @@ namespace nyas
             return;
         /* use pixel index rendering color into gbuff */
         gbuff.for_each_index(
-            [&width, &height] (length_t w, length_t h, RGBColor & color) {      // rendering method
-                color.r = float(w) / (width - 1);
-                color.g = float(h) / (height - 1);
-                color.b = 0.2f;
+            [&width, &height] (length_t w, length_t h, RGBColor & pixel) {      // rendering method
+                pixel.r = float(w) / (width - 1);
+                pixel.g = float(h) / (height - 1);
+                pixel.b = 0.2f;
             }
         );
         /* map floating-point color to display color in display output buffer */
@@ -50,6 +53,42 @@ namespace nyas
         GraphicsBuffer<uint8> ibuff = gbuff.map<uint8>(to_display);
         // save output bffer into bmp image
         save_bmp("gradient_color.bmp", ibuff);
+    }
+
+
+    /// example for samplers
+    void example_samplers()
+    {
+        DisplayRGBColor const BLACK(0);
+        DisplayRGBColor const WHITE(255);
+        auto clean_to_black = [&BLACK] (DisplayRGBColor & pixel) { pixel = BLACK; };
+
+        auto plot_point = [&WHITE] (GraphicsBuffer<uint8> & buff, Sampler & sampler) {
+            for (Point2D const& sample : sampler.samples()) {
+                buff(Length2D(Point2D(buff.size()) * sample)) = WHITE;
+            }
+        };
+
+        // display output buffer
+        GraphicsBuffer<uint8> buff(256, 256);
+
+        // regular sampling
+        buff.for_each(clean_to_black);
+        samplers::Regular samp1(4);
+        plot_point(buff, samp1);
+        save_bmp("samp-Regular.bmp", buff);
+
+        // pure random sampling
+        buff.for_each(clean_to_black);
+        samplers::PureRandom samp2(4);
+        plot_point(buff, samp2);
+        save_bmp("samp-PureRandom.bmp", buff);
+
+        // regular sampling
+        buff.for_each(clean_to_black);
+        samplers::Jittered samp3(4);
+        plot_point(buff, samp3);
+        save_bmp("samp-Jittered.bmp", buff);
     }
 
 } // namespace nyas

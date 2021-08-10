@@ -10,6 +10,14 @@ Target: A fully functional render process.
 
 ## Update Log
 
+### 10-08-21
+
++ Add random number method in `common/randoms.hpp`.
+
++ Add 3 different sampler: `Regular`, `PureRandom` and `Jittered`.
+
++ Add example `example_samplers` in `examples.hpp`.
+
 ### 06-08-21
 
 + Add rvalue reference in `GraphicsBuffer`, and add method `cast<U>` and `map<U>`.

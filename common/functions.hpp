@@ -3,11 +3,26 @@
 
 #include "glm/glm.hpp"
 #include "types.hpp"
+#include "constants.hpp"
 #include "fast_inversesqrt.hpp"
 
 
 namespace nyas
 {
+    /// literal suffix 'degree' for angle
+    float128 constexpr inline operator""_deg(float128 degree)
+    {
+        constexpr float128 to_radian = pi<float128>() / 180.;
+        return degree * to_radian;
+    }
+
+    /// literal suffix 'radian' for angle
+    float128 constexpr inline operator""_rad(float128 radian)
+    {
+        return radian;
+    }
+
+
     /* using math functions already in glm */
 
     using ::glm::sqrt;
