@@ -10,6 +10,10 @@ Target: A fully functional render process.
 
 ## Update Log
 
+### 11-08-21
+
++ Add samplers: `NRooks` and `MultiJittered`, and add corresponding examples in `example_samplers()`
+
 ### 10-08-21
 
 + Add random number method in `common/randoms.hpp`.

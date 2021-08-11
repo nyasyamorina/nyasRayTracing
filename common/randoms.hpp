@@ -1,10 +1,11 @@
 /// @file common/randoms.hpp
 #pragma once
 
-#define RANDOM_WITH_TIME
+//#define RANDOM_WITH_TIME
 
 #include "types.hpp"
 #include <random>
+#include <limits>
 #ifdef RANDOM_WITH_TIME
     #include <chrono>
 #endif
@@ -36,6 +37,12 @@ namespace nyas
 
     namespace random
     {
+        length_t inline integer()
+        {
+            // ! cannot return negative number
+            return static_cast<length_t>(_detail::random_generator() & INT_MAX);
+        }
+
         float64 inline uniform()
         {
             return _detail::distribution01(_detail::random_generator);

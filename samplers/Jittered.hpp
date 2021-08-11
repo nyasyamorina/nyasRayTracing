@@ -31,10 +31,10 @@ namespace nyas
         protected:
             void virtual _generate_samples() override
             {
-                float64 const _float0 = 1. / static_cast<float64>(_side_length);
+                float64 const cell_size = 1. / static_cast<float64>(_side_length);
                 for (length_t y = 0; y < _side_length; ++y) {
                     for (length_t x = 0; x < _side_length; ++x) {
-                        _samples.push_back((Point2D(x, y) + random::uniform2D()) * _float0);
+                        _samples.push_back((Point2D(x, y) + random::uniform2D()) * cell_size);
                     }
                 }
             }

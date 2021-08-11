@@ -9,6 +9,8 @@
 #include "samplers/Regular.hpp"
 #include "samplers/PureRandom.hpp"
 #include "samplers/Jittered.hpp"
+#include "samplers/NRooks.hpp"
+#include "samplers/MultiJittered.hpp"
 #include <iostream>
 
 
@@ -74,21 +76,33 @@ namespace nyas
 
         // regular sampling
         buff.for_each(clean_to_black);
-        samplers::Regular samp1(4);
+        samplers::Regular samp1(8);
         plot_point(buff, samp1);
         save_bmp("samp-Regular.bmp", buff);
 
         // pure random sampling
         buff.for_each(clean_to_black);
-        samplers::PureRandom samp2(4);
+        samplers::PureRandom samp2(8);
         plot_point(buff, samp2);
         save_bmp("samp-PureRandom.bmp", buff);
 
-        // regular sampling
+        // jittered sampling
         buff.for_each(clean_to_black);
-        samplers::Jittered samp3(4);
+        samplers::Jittered samp3(8);
         plot_point(buff, samp3);
         save_bmp("samp-Jittered.bmp", buff);
+
+        // n-Rooks sampling
+        buff.for_each(clean_to_black);
+        samplers::NRooks samp4(8);
+        plot_point(buff, samp4);
+        save_bmp("samp-NRooks.bmp", buff);
+
+        // multi-jittered sampling
+        buff.for_each(clean_to_black);
+        samplers::Jittered samp5(8);
+        plot_point(buff, samp5);
+        save_bmp("samp-MultiJittered.bmp", buff);
     }
 
 } // namespace nyas

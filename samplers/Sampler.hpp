@@ -8,7 +8,7 @@
 namespace nyas
 {
     /// Take multi samples in single pixel.
-    /// number of samples should be squares.
+    /// number of samples should be perfect square.
     ///
     /// @param n side length of sampler grid
     class Sampler
