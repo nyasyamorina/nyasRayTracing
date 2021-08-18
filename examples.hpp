@@ -11,6 +11,7 @@
 #include "samplers/Jittered.hpp"
 #include "samplers/NRooks.hpp"
 #include "samplers/MultiJittered.hpp"
+#include "samplers/Hammersley.hpp"
 #include <iostream>
 
 
@@ -100,9 +101,15 @@ namespace nyas
 
         // multi-jittered sampling
         buff.for_each(clean_to_black);
-        samplers::Jittered samp5(8);
+        samplers::MultiJittered samp5(8);
         plot_point(buff, samp5);
         save_bmp("samp-MultiJittered.bmp", buff);
+
+        // hammersley sampling
+        buff.for_each(clean_to_black);
+        samplers::Hammersley samp6(8);
+        plot_point(buff, samp6);
+        save_bmp("samp-Hammersley.bmp", buff);
     }
 
 } // namespace nyas

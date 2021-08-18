@@ -9,12 +9,9 @@
 
 
 int main() {
-    /// @see test_inversesqrt
-    //nyas::test_inersesqrt();
+    nyas::test_inersesqrt();
 
-    /// @see example_rendering_output
-    //nyas::example_rendering_output();
-
+    nyas::example_rendering_output();
 
     nyas::example_samplers();
 }

@@ -1,6 +1,10 @@
 /// @file common/funcions.hpp
 #pragma once
 
+
+#define OVERRANGE_REPEAT_MODE 2       // 0: clamp; 1: cycle roop; 2: mirror reflect
+
+
 #include "glm/glm.hpp"
 #include "types.hpp"
 #include "constants.hpp"
@@ -28,6 +32,14 @@ namespace nyas
     using ::glm::sqrt;
     using ::glm::pow;
     using ::glm::clamp;
+    using ::glm::abs;
+    using ::glm::mod;
+    using ::glm::sin;
+    using ::glm::cos;
+    using ::glm::tan;
+    using ::glm::asin;
+    using ::glm::acos;
+    using ::glm::atan;
 
     using ::glm::dot;
     using ::glm::cross;
@@ -40,7 +52,7 @@ namespace nyas
     template<length_t L, typename T>
     vec<L, T> inline pow(vec<L, T> const& v, T exponent)
     {
-        static_assert(is_float<T>(), "'pow' accepts only floating-point input");
+        static_assert(is_floating_point<T>::value, "'pow' accepts only floating-point input");
         return pow(v, vec<L, T>(exponent));
     }
 
@@ -53,6 +65,195 @@ namespace nyas
     T inline length2(vec<L, T> const& v)
     {
         return dot(v, v);
+    }
+
+
+    namespace _detail   // ! user should not use namespace '_detail'
+    {
+        template<length_t L, typename T>
+        struct _delta
+        {
+            T static constexpr value = static_cast<T>(0);
+        };
+
+        template<>
+        struct _delta<1, float32>
+        {
+            float32 static constexpr value = 1e-12f;
+        };
+
+        template<>
+        struct _delta<2, float32>
+        {
+            float32 static constexpr value = 1e-6f;
+        };
+
+        template<>
+        struct _delta<3, float32>
+        {
+            float32 static constexpr value = 1e-4f;
+        };
+
+        template<>
+        struct _delta<4, float32>
+        {
+            float32 static constexpr value = 1e-3f;
+        };
+
+        template<>
+        struct _delta<1, float64>
+        {
+            float64 static constexpr value = 1e-24;
+        };
+
+        template<>
+        struct _delta<2, float64>
+        {
+            float64 static constexpr value = 1e-12;
+        };
+
+        template<>
+        struct _delta<3, float64>
+        {
+            float64 static constexpr value = 1e-8;
+        };
+
+        template<>
+        struct _delta<4, float64>
+        {
+            float64 static constexpr value = 1e-6;
+        };
+
+        template<length_t L, typename genType>
+        bool constexpr inline _near_to_zero(genType x)
+        {
+            return -_detail::_delta<L, genType>::value <= x && x <= _detail::_delta<L, genType>::value;
+        }
+
+
+        template<length_t L, typename T>
+        struct vec_near_to_zero;
+
+        template<typename T>
+        struct vec_near_to_zero<1, T>
+        {
+            bool static constexpr inline call(vec<1, T> const& v)
+            {
+                return _near_to_zero<1, T>(v.x);
+            }
+        };
+
+        template<typename T>
+        struct vec_near_to_zero<2, T>
+        {
+            bool static constexpr inline call(vec<2, T> const& v)
+            {
+                return _near_to_zero<2, T>(v.x) && _near_to_zero<2, T>(v.y);
+            }
+        };
+
+        template<typename T>
+        struct vec_near_to_zero<3, T>
+        {
+            bool static constexpr inline call(vec<3, T> const& v)
+            {
+                return _near_to_zero<3, T>(v.x) && _near_to_zero<3, T>(v.y) && _near_to_zero<3, T>(v.z);
+            }
+        };
+
+        template<typename T>
+        struct vec_near_to_zero<4, T>
+        {
+            bool static constexpr inline call(vec<4, T> const& v)
+            {
+                return _near_to_zero<4, T>(v.x) && _near_to_zero<4, T>(v.y) && _near_to_zero<4, T>(v.z) && _near_to_zero<4, T>(v.w);
+            }
+        };
+
+    } // namespace _detail
+
+    /// Return input is near to 0 or not.
+    ///
+    /// @tparam genType floating-point type
+    template<typename genType>
+    bool constexpr inline near_to_zero(genType x)
+    {
+        static_assert(is_floating_point<genType>::value, "'near_to_zero' only accepts floating-point input");
+        return _detail::_near_to_zero<1, genType>(x);
+    }
+
+    /// Return input is near to 0 or not.
+    ///
+    /// @tparam L dimension of 'vec', must be in the 1 to 4 range
+    /// @tparam genType floating-point type
+    template<length_t L, typename T>
+    bool constexpr inline near_to_zero(vec<L, T> const& v)
+    {
+        return _detail::vec_near_to_zero<L, T>::call(v);
+    }
+
+
+    template<typename T>
+    struct axis3D
+    {
+        vec<3, T> static constexpr inline O()
+        {
+            return vec<3, T>(static_cast<T>(0));
+        }
+
+        vec<3, T> static constexpr inline X()
+        {
+            return vec<3, T>(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0));
+        }
+
+        vec<3, T> static constexpr inline Y()
+        {
+            return vec<3, T>(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0));
+        }
+
+        vec<3, T> static constexpr inline Z()
+        {
+            return vec<3, T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1));
+        }
+    };
+
+    template<typename T>
+    struct axis2D
+    {
+        vec<2, T> static constexpr inline O()
+        {
+            return vec<2, T>(static_cast<T>(0));
+        }
+
+        vec<2, T> static constexpr inline X()
+        {
+            return vec<2, T>(static_cast<T>(1), static_cast<T>(0));
+        }
+
+        vec<2, T> static constexpr inline Y()
+        {
+            return vec<2, T>(static_cast<T>(0), static_cast<T>(1));
+        }
+    };
+
+
+    /// Reduce number into range [0, 1], control by macro "OVERRANGE_REPEAT_MODE"
+    ///
+    /// @tparam L dimension of 'vec', must be in the 1 to 4 range
+    /// @tparam genType floating-point type
+    template<length_t L, typename T>
+    vec<L, T> inline reduce_over01(vec<L, T> const& v)
+    {
+        static_assert(is_floating_point<T>::value, "'reduce_over01' accepts only floating-point input");
+#if (OVERRANGE_REPEAT_MODE == 0)
+        return clamp(v, 0., 1.);
+#elif (OVERRANGE_REPEAT_MODE == 1)
+        return ::glm::fract(v);
+#elif (OVERRANGE_REPEAT_MODE == 2)
+        return static_cast<T>(1) - abs(static_cast<T>(1) - mod(v, static_cast<T>(2)));
+#else
+#error unknown value on OVERRANGE_REPEAT_MODE
+#endif
     }
 
 
@@ -109,7 +310,7 @@ namespace nyas
     template<length_t L, typename T>
     vec<L, T> inline inversesqrt(vec<L, T> const& v)
     {
-        static_assert(is_float<T>(), "'inversesqrt' accepts only floating-point inputs");
+        static_assert(is_floating_point<T>::value, "'inversesqrt' accepts only floating-point inputs");
         return _detail::fast_inversesqrt_vec<L, T>::call(v);
     }
 
@@ -121,7 +322,7 @@ namespace nyas
 	template<length_t L, typename T>
     vec<L, T> inline normalize(vec<L, T> const& x)
     {
-        static_assert(is_float<T>(), "'normalize' accepts only floating-point inputs");
+        static_assert(is_floating_point<T>::value, "'normalize' accepts only floating-point inputs");
         return x * inversesqrt(length2(x));
     }
 

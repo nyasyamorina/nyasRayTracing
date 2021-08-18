@@ -2,7 +2,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include <limits>
+#include <type_traits>
 
 
 namespace nyas
@@ -33,25 +33,7 @@ namespace nyas
     typedef vec<2, length_t> Length2D;
 
 
-    /// is 'T' a floating-point type? (float/double/long double)
-    template<typename T>
-    bool constexpr inline is_float()
-    {
-        return std::numeric_limits<T>::is_iec559;
-    }
-
-    /// is 'T' a integer type? (bool/short/int/long/long long)
-    template<typename T>
-    bool constexpr inline is_integer()
-    {
-        return std::numeric_limits<T>::is_integer;
-    }
-
-    /// is 'T' a number type? (floting-point or integer)
-    template<typename T>
-    bool constexpr inline is_number()
-    {
-        return is_float<T>() || is_integer<T>();
-    }
+    using ::std::is_floating_point;
+    using ::std::is_integral;
 
 } // namespace nyas

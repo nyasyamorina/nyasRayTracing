@@ -4,8 +4,6 @@
 #include "Sampler.hpp"
 #include "../common/randoms.hpp"
 
-#include "../common/vec_output.hpp"
-
 
 namespace nyas
 {
@@ -34,12 +32,11 @@ namespace nyas
             void virtual _generate_samples() override
             {
                 float64 const cell_size = 1. / static_cast<float64>(_side_length);
-                float64 const subcell_size = 1. / static_cast<float64>(_side_length * _side_length);
+                float64 const subcell_size = 1. / static_cast<float64>(_num_samples);
                 for (length_t y = 0; y < _side_length; ++y) {
                     for (length_t x = 0; x < _side_length; ++x) {
                         Point2D target = Point2D(x, y) * cell_size + (Point2D(y, x) + random::uniform2D()) * subcell_size;
                         _samples.push_back(target);
-                        std::cout << target << std::endl;
                     }
                 }
                 _shuffle_x_coordinates();

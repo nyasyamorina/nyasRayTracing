@@ -10,9 +10,17 @@ Target: A fully functional render process.
 
 ## Update Log
 
+### 18-08-21
+
++ Fix `NRooks` sampler cannot generate samples correctly.
+
++ Add `RenderPlane` and `Camera` class to simulate simple camera.
+
++ Add `Hammersley` sampler and add its example in `examples.hpp`
+
 ### 11-08-21
 
-+ Add samplers: `NRooks` and `MultiJittered`, and add corresponding examples in `example_samplers()`
++ Add samplers: `NRooks` and `MultiJittered`, and add corresponding examples in `example_samplers()`.
 
 ### 10-08-21
 

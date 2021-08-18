@@ -21,23 +21,19 @@ namespace nyas
         {
             return _side_length;
         }
-
         length_t inline num_samples() const
         {
             return _num_samples;
         }
 
-
         SampleList inline & samples()
         {
             return _samples;
         }
-
         SampleList inline const& samples() const
         {
             return _samples;
         }
-
 
         /// Return next sample
         Point2D next()

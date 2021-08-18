@@ -1,12 +1,12 @@
 /// @file common/fast_inversesqrt.hpp
 #pragma once
 
-#include "types.hpp"
-#include <bit>
 
 #define FAST_INVERSE_SQUARE_ROOT
 
-// TODO: use SSE instruction set
+
+#include "types.hpp"
+#include <bit>
 
 
 namespace nyas
@@ -60,7 +60,7 @@ namespace nyas
     template<typename genType>
     genType inversesqrt(genType x)
     {
-        static_assert(is_float<genType>(), "'inversesqrt' accepts only floating-point inputs");
+        static_assert(is_floating_point<genType>::value, "'inversesqrt' accepts only floating-point inputs");
 
         return _detail::fast_inversesqrt<genType>::call(x);
     }

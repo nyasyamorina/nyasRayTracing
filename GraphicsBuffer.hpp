@@ -18,7 +18,7 @@ namespace nyas
     template<typename T>
     class GraphicsBuffer
     {
-        static_assert(is_number<T>(), "'GraphicsBuffer' accepts only floating-point or integer");
+        static_assert(is_floating_point<T>::value || is_integral<T>::value, "'GraphicsBuffer' accepts only floating-point or integer");
 
     public:
         typedef vec<3, T> Data;
@@ -30,8 +30,7 @@ namespace nyas
             , _data_ptr(nullptr)
         {}
         explicit GraphicsBuffer(length_t width, length_t height)
-            : _size(width, height)
-            , _data_ptr(new Data[width * height])
+            : GraphicsBuffer(Length2D(width, height))
         {}
         explicit GraphicsBuffer(Length2D size)
             : _size(size)
@@ -82,7 +81,7 @@ namespace nyas
         {
             return _size.x * _size.y;
         }
-        Length2D inline size() const
+        Length2D inline const& size() const
         {
             return _size;
         }
@@ -278,43 +277,19 @@ namespace nyas
         length_t file_size = buffer_size + 54;
         length_t const color_depth = 24;
 
-        uint8 header[54];
-        uint8 * ptr = header;
-        /* header */
-        *(ptr++) = 0x42; *(ptr++) = 0x4D;     // BM
-        *(ptr++) = file_size & 0xFF; file_size >>= 8;   // bfSize
-        *(ptr++) = file_size & 0xFF; file_size >>= 8;
-        *(ptr++) = file_size & 0xFF; file_size >>= 8;
-        *(ptr++) = file_size & 0xFF;
-        *(ptr++) = 0; *(ptr++) = 0;           // bfReserved1
-        *(ptr++) = 0; *(ptr++) = 0;           // bfReserved2
-        *(ptr++) = 0x36; *(ptr++) = 0;        // bfOffBits
-        *(ptr++) = 0; *(ptr++) = 0;
-        /* info header */
-        *(ptr++) = 0x28; *(ptr++) = 0;        // biSize
-        *(ptr++) = 0; *(ptr++) = 0;
-        *(ptr++) = width & 0xFF; width >>= 8;       // biWidth
-        *(ptr++) = width & 0xFF;
-        *(ptr++) = 0; *(ptr++) = 0;
-        *(ptr++) = height & 0xFF; height >>= 8;     // biHeight
-        *(ptr++) = height & 0xFF;
-        *(ptr++) = 0; *(ptr++) = 0;
-        *(ptr++) = 1; *(ptr++) = 0;           // biPlanes
-        *(ptr++) = 0x18; *(ptr++) = 0;        // biBitCount
-        *(ptr++) = 0; *(ptr++) = 0;           // biCompression
-        *(ptr++) = 0; *(ptr++) = 0;
-        *(ptr++) = buffer_size & 0xFF; buffer_size >>= 8;   // biSizeImage
-        *(ptr++) = buffer_size & 0xFF; buffer_size >>= 8;
-        *(ptr++) = buffer_size & 0xFF; buffer_size >>= 8;
-        *(ptr++) = buffer_size & 0xFF;
-        *(ptr++) = 0; *(ptr++) = 0;           // biXPelsPerMeter
-        *(ptr++) = 0; *(ptr++) = 0;
-        *(ptr++) = 0; *(ptr++) = 0;           // biYPelsPerMeter
-        *(ptr++) = 0; *(ptr++) = 0;
-        *(ptr++) = 0; *(ptr++) = 0;           // biClrUsed
-        *(ptr++) = 0; *(ptr++) = 0;
-        *(ptr++) = 0; *(ptr++) = 0;           // biClrImportant
-        *(ptr++) = 0; *ptr = 0;
+        uint8 header[54] = {
+            66, 77, 88, 88, 88, 88,  0,  0,  0,  0, 54,  0,  0,  0, 40,  0,
+            0,   0, 88, 88, 88, 88, 88, 88, 88, 88,  1,  0, 24,  0,  0,  0,
+            0,   0, 88, 88, 88, 88,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+            0,   0,  0,  0,  0,  0
+        };
+        uint8 * ptr = header + 2;
+        *(ptr++) = file_size & 0xFF; *(ptr++) = (file_size >>= 8) & 0xFF; *(ptr++) = (file_size >>= 8) & 0xFF; *ptr = (file_size >>= 8) & 0xFF;
+        ptr += 13;
+        *(ptr++) = width & 0xFF; *(ptr++) = (width >>= 8) & 0xFF; *(ptr++) = (width >>= 8) & 0xFF; *(ptr++) = (width >>= 8) & 0xFF;
+        *(ptr++) = height & 0xFF; *(ptr++) = (height >>= 8) & 0xFF; *(ptr++) = (height >>= 8) & 0xFF; *ptr = (height >>= 8) & 0xFF;
+        ptr += 9;
+        *(ptr++) = buffer_size & 0xFF; *(ptr++) = (buffer_size >>= 8) & 0xFF; *(ptr++) = (buffer_size >>= 8) & 0xFF; *ptr = (buffer_size >>= 8) & 0xFF;
 
 
         ::std::ofstream outfile;
