@@ -171,7 +171,6 @@ namespace nyas
     typedef std::shared_ptr<Camera const> CameraConstptr;
 
 
-    // ? To be verified.
     /// set correct view_direction and return correct view_up with azimuth, zenith angle and tilt angle
     ///
     /// @param azimuth angle between projection of view_direction on xOy plane and x axis
@@ -188,8 +187,8 @@ namespace nyas
         view_direction.y = sa * sz;
         view_direction.z = cz;
         return Vector3D(
-            sa * st - ca * cz * ct,
             ca * st - sa * cz * ct,
+            -sa * st - ca * cz * ct,
             sz * ct
         );
     }

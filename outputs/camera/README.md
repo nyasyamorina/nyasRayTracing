@@ -15,3 +15,7 @@ example programs: [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/
 **example_samplers** (pinhole2.bmp)
 
 ![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/pinhole2.bmp)
+
+**example_samplers** (pinhole3.bmp)
+
+![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/pinhole3.bmp)

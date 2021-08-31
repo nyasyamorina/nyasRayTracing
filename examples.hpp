@@ -188,28 +188,25 @@ namespace nyas
             float64 half_b = dot(ray.direction, c2o);
             float64 discriminant = half_b * half_b - a * (length2(c2o) - square_radius);
             if (discriminant < 0.) {
-                t_ball = infinity<float64>();
+                t_ball = -1.;
             }
             else {
                 float64 sqrt_d = sqrt(discriminant);
                 t_ball = (-half_b - sqrt_d) / a;
                 if (t_ball < 0.) {
-                    t_ball = (half_b - sqrt_d) / a;
-                    if (t_ball < 0.) {
-                        t_ball = infinity<float64>();
-                    }
+                    t_ball = (-half_b + sqrt_d) / a;
                 }
             }
 
             Point3D hitting_point;
             // if ray hit ball
-            if (t_ball >= 0. && t_ball < t_floor) {
+            if (t_ball >= 0. && (t_ball < t_floor || t_floor < 0.)) {
                 // return normal color on ball
                 hitting_point = ray.at(t_ball);
                 return RGBColor((hitting_point - ball_center) / ball_radius * 0.5 + 0.5);
             }
             // if ray hit floor
-            else if (t_floor >= 0. && t_floor < t_ball) {
+            else if (t_floor >= 0. && (t_floor < t_ball || t_ball < 0.)) {
                 hitting_point = ray.at(t_floor);
                 if (int(mod(floor(hitting_point.x) + floor(hitting_point.y), 2.)) == 1) {
                     return RGBColor(0.1);       // checkerboard color 1
@@ -224,7 +221,7 @@ namespace nyas
             }
         };
 
-        /* render ray per pixel */
+        /* render ray each pixel */
         auto render_and_output = [&render_ray] (Camera & camera, char const* output_path) {
             camera.figure().for_each_index(
                 [&render_ray, &camera] (Length2D const& indexes, RGBColor & pixel) {
@@ -254,6 +251,15 @@ namespace nyas
             figure_size, Point3D(3.5, 3.5, 4.0), Vector3D(-1.), 50._deg
         );
         render_and_output(*camera3, (camera_output_dir + "pinhole2.bmp").c_str());
+
+        /* perspective projection but rotate camera by some angle */
+        Vector3D view_direction;
+        cameras::PinholePtr camera4 = cameras::default_pinhole(
+            figure_size, Point3D(3.8, -2.8, 1.5), view_direction, 90._deg, correct_view(135._deg, 96._deg, 15._deg, view_direction)
+        );
+        render_and_output(*camera4, (camera_output_dir + "pinhole3.bmp").c_str());
+
+        cout << endl;
     }
 
 } // namespace nyas
