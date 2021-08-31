@@ -2,10 +2,9 @@
 
 ////#include "glm/glm.hpp"
 #include "examples.hpp"
-#include "samplers/Sampler.hpp"
-#include "samplers/Regular.hpp"
-#include "samplers/PureRandom.hpp"
-#include "samplers/Jittered.hpp"
+#include "cameras/Camera.hpp"
+#include "cameras/Parallel.hpp"
+#include "cameras/Pinhole.hpp"
 
 
 int main() {
@@ -14,4 +13,6 @@ int main() {
     nyas::example_rendering_output();
 
     nyas::example_samplers();
+
+    nyas::example_cameras();
 }

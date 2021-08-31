@@ -10,13 +10,21 @@ Target: A fully functional render process.
 
 ## Update Log
 
+### 31-08-21
+
++ Add `cameras`: `Parallel` and `Pinhole`.
+
++ Add example `example_cameras`, see outputs in [outputs/camera](https://github.com/nyasyamorina/nyasRayTracing/tree/master/outputs/camera).
+
++ refactory output directory.
+
 ### 18-08-21
 
 + Fix `NRooks` sampler cannot generate samples correctly.
 
 + Add `RenderPlane` and `Camera` class to simulate simple camera.
 
-+ Add `Hammersley` sampler and add its example in `examples.hpp`
++ Add `Hammersley` sampler and add its example in `examples.hpp`.
 
 ### 11-08-21
 
@@ -28,7 +36,7 @@ Target: A fully functional render process.
 
 + Add 3 different sampler: `Regular`, `PureRandom` and `Jittered`.
 
-+ Add example `example_samplers` in `examples.hpp`.
++ Add example `example_samplers`, see outputs in [outputs/sampler](https://github.com/nyasyamorina/nyasRayTracing/tree/master/outputs/sampler).
 
 ### 06-08-21
 
@@ -52,7 +60,7 @@ Target: A fully functional render process.
 
 + Refactored directories, see `Need some Helps` on bottom.
 
-+ Added 2D graphics buffer in `GraphicsBuffer.hpp`. now it can render and output a simple [image](./outputs/gradient_color.bmp).
++ Added 2D graphics buffer in `GraphicsBuffer.hpp`. now it can render and output a simple [outputs](https://github.com/nyasyamorina/nyasRayTracing/tree/master/outputs).
 
 ### 01-08-21
 

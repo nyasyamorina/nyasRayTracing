@@ -6,8 +6,6 @@
 #include <fstream>
 #include <functional>
 
-#define GBUFF_CHECK_WRITING_DATA
-
 
 namespace nyas
 {
@@ -81,7 +79,7 @@ namespace nyas
         {
             return _size.x * _size.y;
         }
-        Length2D inline const& size() const
+        Length2D inline size() const
         {
             return _size;
         }
@@ -140,18 +138,14 @@ namespace nyas
         GraphicsBuffer<U> map(std::function<vec<3, U>(Data const&)> func) const
         {
             GraphicsBuffer<U> new_buff(_size);
-#ifdef GBUFF_CHECK_WRITING_DATA
             if (new_buff.valid()) {
-#endif
                 auto new_data_ptr = new_buff.data_pointer();
                 Data * old_data_ptr = _data_ptr;
                 length_t const totoal_data = total();
                 for (length_t i = 0; i < totoal_data; ++i) {
                     *(new_data_ptr++) = func(*(old_data_ptr++));
                 }
-#ifdef GBUFF_CHECK_WRITING_DATA
             }
-#endif
             return new_buff;
         }
 
@@ -199,18 +193,14 @@ namespace nyas
         GraphicsBuffer<U> cast() const
         {
             GraphicsBuffer<U> new_buffer(_size);
-#ifdef GBUFF_CHECK_WRITING_DATA
             if (new_buffer.valid()) {
-#endif
                 auto new_data_ptr = new_buffer.data_pointer();
                 Data * old_data_ptr = _data_ptr;
                 length_t const total_data = total();
                 for (length_t i = 0; i < total_data; ++i) {
                     *(new_data_ptr++) = *(old_data_ptr++);
                 }
-#ifdef GBUFF_CHECK_WRITING_DATA
             }
-#endif
             return new_buffer;
         }
 
@@ -222,18 +212,14 @@ namespace nyas
         GraphicsBuffer<U> & cast(GraphicsBuffer<U> & buff) const
         {
             assert(buff.size() == _size);
-#ifdef GBUFF_CHECK_WRITING_DATA
             if (buff.valid()) {
-#endif
                 auto new_data_ptr = buff.data_pointer();
                 Data * old_data_ptr = _data_ptr;
                 length_t const total_data = total();
                 for (length_t i = 0; i < total_data; ++i) {
                     *(new_data_ptr++) = *(old_data_ptr++);
                 }
-#ifdef GBUFF_CHECK_WRITING_DATA
             }
-#endif
             return buff;
         }
 
@@ -248,17 +234,13 @@ namespace nyas
             delete[] _data_ptr;
             length_t const total_data = total();
             _data_ptr = new Data[total_data];
-#ifdef GBUFF_CHECK_WRITING_DATA
             if (_data_ptr != nullptr) {
-#endif
                 Data * old_data_ptr = buff._data_ptr;
                 Data * new_data_ptr = _data_ptr;
                 for (length_t i = 0; i < total_data; ++i) {
                     *(new_data_ptr++) = *(old_data_ptr);
                 }
-#ifdef GBUFF_CHECK_WRITING_DATA
             }
-#endif
         }
     };
 
@@ -316,7 +298,7 @@ namespace nyas
     DisplayRGBColor to_display(RGBColor const& color)
     {
         // pow(color, 1/2.2) is for gamma correction (https://en.wikipedia.org/wiki/Gamma_correction)
-        return DisplayRGBColor(clamp(255.f * pow(color, 1.f/2.2f), 0.f, 255.f));
+        return DisplayRGBColor(clamp(256.f * pow(color, 1.f/2.2f), 0.f, 255.f));
     }
 
 } // namespace nyas

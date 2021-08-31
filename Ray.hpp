@@ -21,6 +21,12 @@ namespace nyas
         Ray(Ray const&) = default;
 
         Ray & operator=(Ray const&) = default;
+
+        /// return ray position by passing time t
+        Point3D inline at(float64 t) const
+        {
+            return origin + direction * t;
+        }
     };
 
 } // namespace nyas
