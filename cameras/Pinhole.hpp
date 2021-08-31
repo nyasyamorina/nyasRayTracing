@@ -103,7 +103,7 @@ namespace nyas
             float64 const scalar = view_distance * tan(0.5 * fov);
             PinholePtr pinhole = std::make_shared<Pinhole>(figure_size);
             pinhole->set_view_point(view_point);
-            pinhole->set_figure_center(view_point + view_distance * view_direction);
+            pinhole->set_figure_center(view_point + view_distance * normalize(view_direction));
             pinhole->set_figure_direction_u(scalar * normalize(cross(view_direction, view_up)));
             pinhole->set_figure_direction_v((scalar * figure_size.y / figure_size.x) * normalize(cross(pinhole->figure_direction_u(), view_direction)));
             return pinhole;

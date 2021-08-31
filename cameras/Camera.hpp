@@ -187,8 +187,8 @@ namespace nyas
         view_direction.y = sa * sz;
         view_direction.z = cz;
         return Vector3D(
-            ca * st - sa * cz * ct,
-            -sa * st - ca * cz * ct,
+            sa * st - ca * cz * ct,
+            -ca * st - sa * cz * ct,
             sz * ct
         );
     }

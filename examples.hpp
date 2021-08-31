@@ -242,20 +242,21 @@ namespace nyas
 
         /* basic perspective projection */
         cameras::PinholePtr camera2 = cameras::default_pinhole(
-            figure_size, Point3D(3.5, 3.5, 4.0), Vector3D(-1.), 90._deg
+            figure_size, Point3D(3.5, 3.5, 4.0), Vector3D(-1.), 60._deg
         );
         render_and_output(*camera2, (camera_output_dir + "pinhole1.bmp").c_str());
 
         /* perspective projection but zoomed in a bit */
         cameras::PinholePtr camera3 = cameras::default_pinhole(
-            figure_size, Point3D(3.5, 3.5, 4.0), Vector3D(-1.), 50._deg
+            figure_size, Point3D(3.5, 3.5, 4.0), Vector3D(-1.), 30._deg
         );
         render_and_output(*camera3, (camera_output_dir + "pinhole2.bmp").c_str());
 
         /* perspective projection but rotate camera by some angle */
         Vector3D view_direction;
+        Vector3D view_up = correct_view(225._deg, 125._deg, 30._deg, view_direction);
         cameras::PinholePtr camera4 = cameras::default_pinhole(
-            figure_size, Point3D(3.8, -2.8, 1.5), view_direction, 90._deg, correct_view(135._deg, 96._deg, 15._deg, view_direction)
+            figure_size, Point3D(3.5, 3.5, 4.0), view_direction, 60._deg, view_up
         );
         render_and_output(*camera4, (camera_output_dir + "pinhole3.bmp").c_str());
 
