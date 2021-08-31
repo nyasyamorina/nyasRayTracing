@@ -8,10 +8,10 @@ example programs: [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/
 
 ![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/parallele1.bmp)
 
-**example_samplers** (pureRandom.bmp)
+**example_samplers** (pinhole1.bmp)
 
 ![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/pinhole1.bmp)
 
-**example_samplers** (jittered.bmp)
+**example_samplers** (pinhole2.bmp)
 
 ![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/pinhole2.bmp)
