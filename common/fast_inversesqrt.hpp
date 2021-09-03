@@ -28,7 +28,7 @@ namespace nyas
             float32 static inline constexpr call(float32 x)
             {
                 float32 const halfx = x * 0.5f;
-                float32 y = std::bit_cast<float32>(0x5f3759df - (std::bit_cast<uint32>(x) >> 1));
+                float32 y = ::std::bit_cast<float32>(0x5f3759df - (::std::bit_cast<uint32>(x) >> 1));
                 /* use once Newton's method for fast but higher error (+- 0.0018 Relative error) */
                 y = y * (1.5f - (halfx * y * y));
 	            return y * (1.5f - (halfx * y * y));
@@ -41,7 +41,7 @@ namespace nyas
             float64 static inline constexpr call(float64 x)
             {
                 float64 const halfx = x * 0.5;
-                float64 y = std::bit_cast<float64>(0x5fe6eb50c7b537a9 - (std::bit_cast<uint64>(x) >> 1));
+                float64 y = ::std::bit_cast<float64>(0x5fe6eb50c7b537a9 - (::std::bit_cast<uint64>(x) >> 1));
                 /* use once Newton's method for fast but higher error (+- 0.0018 Relative error) */
                 //y = y * (1.5 - (halfx * y * y));
                 //y = y * (1.5 - (halfx * y * y));

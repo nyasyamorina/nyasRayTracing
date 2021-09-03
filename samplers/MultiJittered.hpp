@@ -9,47 +9,45 @@ namespace nyas
 {
     namespace samplers
     {
-        class MultiJittered : public Sampler
+        class MultiJittered final : public Sampler
         {
         public:
             MultiJittered()
                 : MultiJittered(1)
             {}
-
             MultiJittered(length_t side)
                 : Sampler(side)
             {
-                if (_side_length == 1) {
-                    _samples.push_back(Point2D(0.5));
+                if (this->_side_length == 1) {
+                    this->_samples.push_back(Point2D(0.5));
                 }
                 else {
-                    _generate_samples();
+                    this->_generate_samples();
                 }
             }
 
 
-        protected:
+        private:
             void virtual _generate_samples() override
             {
-                float64 const cell_size = 1. / static_cast<float64>(_side_length);
-                float64 const subcell_size = 1. / static_cast<float64>(_num_samples);
-                for (length_t y = 0; y < _side_length; ++y) {
-                    for (length_t x = 0; x < _side_length; ++x) {
-                        Point2D target = Point2D(x, y) * cell_size + (Point2D(y, x) + random::uniform2D()) * subcell_size;
-                        _samples.push_back(target);
+                float64 const cell_size = 1. / static_cast<float64>(this->_side_length);
+                float64 const subcell_size = 1. / static_cast<float64>(this->_num_samples);
+                for (length_t y = 0; y < this->_side_length; ++y) {
+                    for (length_t x = 0; x < this->_side_length; ++x) {
+                        this->_samples.push_back(Point2D(x, y) * cell_size + (Point2D(y, x) + random::uniform2D()) * subcell_size);
                     }
                 }
-                _shuffle_x_coordinates();
-                _shuffle_y_coordinates();
+                this->_shuffle_x_coordinates();
+                this->_shuffle_y_coordinates();
             }
 
             void _shuffle_x_coordinates()
             {
-                for (length_t x = 0; x < _side_length; ++x) {
-                    for (length_t y = 1; y < _side_length; ++y) {
+                for (length_t x = 0; x < this->_side_length; ++x) {
+                    for (length_t y = 1; y < this->_side_length; ++y) {
                         std::swap(
-                            _samples[(random::integer() % _side_length) * _side_length + x].x,
-                            _samples[y * _side_length + x].x
+                            this->_samples[(random::integer() % this->_side_length) * this->_side_length + x].x,
+                            this->_samples[y * this->_side_length + x].x
                         );
                     }
                 }
@@ -57,12 +55,12 @@ namespace nyas
 
             void _shuffle_y_coordinates()
             {
-                for (length_t y = 0; y < _side_length; ++y) {
-                    length_t line_start = y * _side_length;
-                    for (length_t x = 1; x < _side_length; ++x) {
+                for (length_t y = 0; y < this->_side_length; ++y) {
+                    length_t line_start = y * this->_side_length;
+                    for (length_t x = 1; x < this->_side_length; ++x) {
                         std::swap(
-                            _samples[random::integer() % _side_length + line_start].y,
-                            _samples[x + line_start].y
+                            this->_samples[random::integer() % this->_side_length + line_start].y,
+                            this->_samples[x + line_start].y
                         );
                     }
                 }

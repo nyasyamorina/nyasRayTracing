@@ -9,32 +9,31 @@ namespace nyas
 {
     namespace samplers
     {
-        class Jittered : public Sampler
+        class Jittered final : public Sampler
         {
         public:
             Jittered()
                 : Jittered(1)
             {}
-
             Jittered(length_t side)
                 : Sampler(side)
             {
-                if (_side_length == 1) {
-                    _samples.push_back(Point2D(0.5));
+                if (this->_side_length == 1) {
+                    this->_samples.push_back(Point2D(0.5));
                 }
                 else {
-                    _generate_samples();
+                    this->_generate_samples();
                 }
             }
 
 
-        protected:
+        private:
             void virtual _generate_samples() override
             {
-                float64 const cell_size = 1. / static_cast<float64>(_side_length);
-                for (length_t y = 0; y < _side_length; ++y) {
-                    for (length_t x = 0; x < _side_length; ++x) {
-                        _samples.push_back((Point2D(x, y) + random::uniform2D()) * cell_size);
+                float64 const cell_size = 1. / static_cast<float64>(this->_side_length);
+                for (length_t y = 0; y < this->_side_length; ++y) {
+                    for (length_t x = 0; x < this->_side_length; ++x) {
+                        this->_samples.push_back((Point2D(x, y) + random::uniform2D()) * cell_size);
                     }
                 }
             }

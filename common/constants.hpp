@@ -1,7 +1,7 @@
 /// @file common/constants.hpp
+#pragma once
 
 #include "glm/gtc/constants.hpp"
-#include "types.hpp"
 #include <limits>
 
 

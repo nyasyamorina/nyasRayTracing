@@ -3,6 +3,7 @@
 
 #include "glm/glm.hpp"
 #include <type_traits>
+#include <string>
 
 
 namespace nyas
@@ -29,11 +30,13 @@ namespace nyas
     typedef vec<3, float64>  Point3D;
     typedef vec<3, float64>  Vector3D;
     typedef vec<3, float32>  RGBColor;
-    typedef vec<3, uint8>    DisplayRGBColor;
+    typedef vec<3, uint8>    ImageRGBColor;
     typedef vec<2, length_t> Length2D;
 
 
     using ::std::is_floating_point;
     using ::std::is_integral;
+
+    using ::std::string;
 
 } // namespace nyas

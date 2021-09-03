@@ -10,6 +10,14 @@ Target: A fully functional render process.
 
 ## Update Log
 
+### 03-09-21
+
++ Use more general `Buffer2D` instead of `GraphicsBuffer`.
+
++ Gamma correction is not used in [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/examples.hpp) now.
+
++ add [samplers/test.py](https://github.com/nyasyamorina/nyasRayTracing/blob/master/samplers/test.py) for showing samplers.
+
 ### 31-08-21
 
 + Add `cameras`: `Parallel` and `Pinhole`.
@@ -24,7 +32,7 @@ Target: A fully functional render process.
 
 + Add `RenderPlane` and `Camera` class to simulate simple camera.
 
-+ Add `Hammersley` sampler and add its example in `examples.hpp`.
++ Add `Hammersley` sampler and add its example in [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/examples.hpp).
 
 ### 11-08-21
 
@@ -32,7 +40,7 @@ Target: A fully functional render process.
 
 ### 10-08-21
 
-+ Add random number method in `common/randoms.hpp`.
++ Add random number method in [common/randoms.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/common/randoms.hpp).
 
 + Add 3 different sampler: `Regular`, `PureRandom` and `Jittered`.
 
@@ -50,11 +58,12 @@ Target: A fully functional render process.
 
 + Fixed error `there are no arguments to 'is_float' that depend on a template parameter` with `G++` compiler.
 
-+ To fix warning `compound assignment with 'volatile'-qualified left operand is deprecated`, you must manually changing `f*=f` to `f=f*f` in glm file `glm/detail/type_half.inl:9`.
++ To fix warning `compound assignment with 'volatile'-qualified left operand is deprecated`
+, you must manually changing `f*=f` to `f=f*f` in glm file `glm/detail/type_half.inl:9`.
 
 + Unuse `::glm::qualifier` in exposed template type `vec`.
 
-+ Add `examples.hpp`.
++ Add [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/examples.hpp).
 
 ### 02-08-21
 
@@ -64,7 +73,7 @@ Target: A fully functional render process.
 
 ### 01-08-21
 
-+ Added fast inverse square root in `common/fast_inversesqrt.h`.
++ Added fast inverse square root in [common/fast_inversesqrt.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/common/fast_inversesqrt.hpp).
 
 ---
 

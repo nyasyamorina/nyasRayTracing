@@ -26,27 +26,35 @@ namespace nyas
                 : Camera(figure_size)
                 , _view_point(0.)
             {}
-            explicit Pinhole(Length2D const& figure_size,
-                             Point3D const& figure_center,
-                             Vector3D const& figure_u,
-                             Vector3D const& figure_v,
-                             Point3D const& view_point)
+            explicit Pinhole(
+                Length2D const& figure_size,
+                Point3D const& figure_center,
+                Vector3D const& figure_u,
+                Vector3D const& figure_v,
+                Point3D const& view_point
+            )
                 : Camera(figure_size, figure_center, figure_u, figure_v)
                 , _view_point(view_point)
             {}
 
-            void inline set_view_point(Point3D const& view_point)
+            bool virtual inline valid() const override
             {
-                _view_point = view_point;
+                return Camera::valid() && !near_to_zero(this->view_direction());
+            }
+
+            Pinhole inline & set_view_point(Point3D const& view_point)
+            {
+                this->_view_point = view_point;
+                return *this;
             }
 
             Point3D inline view_point() const
             {
-                return _view_point;
+                return this->_view_point;
             }
             Vector3D inline view_direction() const
             {
-                return _figure_center - _view_point;
+                return this->_figure_center - this->_view_point;
             }
 
             /// get ray on figure in 3D-space
@@ -93,11 +101,13 @@ namespace nyas
         /// get a default pinhole camera
         ///
         /// @param fov field of view using radian
-        PinholePtr default_pinhole(Length2D const& figure_size,
-                                   Point3D const& view_point,
-                                   Vector3D const& view_direction,
-                                   float64 fov,
-                                   Vector3D const& view_up = Camera::DEFAULT_VIEW_UP)
+        PinholePtr default_pinhole(
+            Length2D const& figure_size,
+            Point3D const& view_point,
+            Vector3D const& view_direction,
+            float64 fov,
+            Vector3D const& view_up = Camera::DEFAULT_VIEW_UP
+        )
         {
             float64 constexpr view_distance = 1.;       // looks like view_distance is useless in pinhole camera
             float64 const scalar = view_distance * tan(0.5 * fov);

@@ -26,28 +26,31 @@ namespace nyas
                 : Camera(figure_size)
                 , _view_direction(0.)
             {}
-            explicit Parallel(Length2D const& figure_size,
-                              Point3D const& figure_center,
-                              Vector3D const& figure_u,
-                              Vector3D const& figure_v,
-                              Vector3D const& view_direction)
+            explicit Parallel(
+                Length2D const& figure_size,
+                Point3D const& figure_center,
+                Vector3D const& figure_u,
+                Vector3D const& figure_v,
+                Vector3D const& view_direction
+            )
                 : Camera(figure_size, figure_center, figure_u, figure_v)
                 , _view_direction(view_direction)
             {}
 
             bool virtual inline valid() const override
             {
-                return Camera::valid() && !near_to_zero(_view_direction);
+                return Camera::valid() && !near_to_zero(this->_view_direction);
             }
 
-            void inline set_view_direction(Vector3D const& d)
+            Parallel inline & set_view_direction(Vector3D const& d)
             {
-                _view_direction = d;
+                this->_view_direction = d;
+                return *this;
             }
 
             Vector3D inline view_direction() const
             {
-                return _view_direction;
+                return this->_view_direction;
             }
 
             /// get ray on figure in 3D-space
@@ -56,11 +59,11 @@ namespace nyas
             Ray virtual inline get_ray(Point2D const& p) const override
             {
                 return Ray(
-                    at(p),
+                    this->at(p),
 #ifdef GET_RAY_WITH_NORMALIZE
-                    normalize(_view_direction)
+                    normalize(this->_view_direction)
 #else
-                    _view_direction
+                    this->_view_direction
 #endif
                 );
             }
@@ -71,11 +74,11 @@ namespace nyas
             Ray virtual inline get_ray(Length2D const& i) const override
             {
                 return Ray(
-                    at(i),
+                    this->at(i),
 #ifdef GET_RAY_WITH_NORMALIZE
-                    normalize(_view_direction)
+                    normalize(this->_view_direction)
 #else
-                    _view_direction
+                    this->_view_direction
 #endif
                 );
             }
@@ -92,11 +95,13 @@ namespace nyas
         /// get a default patallel camera
         ///
         /// @param figure_width_scalar length of figure width in 3D-space
-        ParallelPtr default_parallel(Length2D const& figure_size,
-                                     float64 figure_width_scalar,
-                                     Point3D const& figure_center,
-                                     Vector3D const& view_direction,
-                                     Vector3D const& view_up = Camera::DEFAULT_VIEW_UP)
+        ParallelPtr default_parallel(
+            Length2D const& figure_size,
+            float64 figure_width_scalar,
+            Point3D const& figure_center,
+            Vector3D const& view_direction,
+            Vector3D const& view_up = Camera::DEFAULT_VIEW_UP
+        )
         {
             float64 const half_scalar = 0.5 * figure_width_scalar;
             ParallelPtr parallel = std::make_shared<Parallel>(figure_size);

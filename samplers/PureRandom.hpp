@@ -9,30 +9,29 @@ namespace nyas
 {
     namespace samplers
     {
-        class PureRandom : public Sampler
+        class PureRandom final : public Sampler
         {
         public:
             PureRandom()
                 : PureRandom(1)
             {}
-
             PureRandom(length_t side)
                 : Sampler(side)
             {
-                if (_side_length == 1) {
-                    _samples.push_back(Point2D(0.5));
+                if (this->_side_length == 1) {
+                    this->_samples.push_back(Point2D(0.5));
                 }
                 else {
-                    _generate_samples();
+                    this->_generate_samples();
                 }
             }
 
 
-        protected:
+        private:
             void virtual _generate_samples() override
             {
-                for (length_t i = 0; i < _num_samples; ++i) {
-                    _samples.push_back(random::uniform2D());
+                for (length_t i = 0; i < this->_num_samples; ++i) {
+                    this->_samples.push_back(random::uniform2D());
                 }
             }
         };

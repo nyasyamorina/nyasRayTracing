@@ -25,7 +25,7 @@ namespace nyas
         /// return ray position by passing time t
         Point3D inline at(float64 t) const
         {
-            return origin + direction * t;
+            return this->origin + this->direction * t;
         }
     };
 

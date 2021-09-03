@@ -8,18 +8,23 @@ namespace nyas
 {
     namespace samplers
     {
-        class Hammersley : public Sampler
+        class Hammersley final : public Sampler
         {
         public:
             Hammersley()
                 : Hammersley(1)
             {}
-
             Hammersley(length_t side)
                 : Sampler(side)
             {
-                _generate_samples();
+                if (this->_side_length == 1) {
+                    this->_samples.push_back(Point2D(0.5));
+                }
+                else {
+                    this->_generate_samples();
+                }
             }
+
 
             float64 static constexpr phi(length_t x)
             {
@@ -34,12 +39,12 @@ namespace nyas
             }
 
 
-        protected:
+        private:
             void virtual _generate_samples() override
             {
-                float64 const cell_size = 1. / static_cast<float64>(_num_samples);
-                for (length_t t = 0; t < _num_samples; ++t) {
-                    _samples.push_back(Point2D(t * cell_size, phi(t)));
+                float64 const cell_size = 1. / static_cast<float64>(this->_num_samples);
+                for (length_t t = 0; t < this->_num_samples; ++t) {
+                    this->_samples.push_back(Point2D(t * cell_size, phi(t)));
                 }
             }
         };

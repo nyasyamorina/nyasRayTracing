@@ -4,8 +4,9 @@
 #include "../common/types.hpp"
 #include "../common/functions.hpp"
 #include "../Ray.hpp"
-#include "../GraphicsBuffer.hpp"
+#include "../Buffer2D.hpp"
 #include <memory>
+#include <tuple>
 
 
 #define REDUCE_POINT_CROSS_BORDER
@@ -14,12 +15,13 @@
 
 namespace nyas
 {
+    using ::std::tuple;
+
+
     /// Basic Camera interface
     class Camera
     {
     public:
-        typedef GraphicsBuffer<float32> Figure;
-
         Vector3D static constexpr DEFAULT_VIEW_UP = axis3D<float64>::Z();
         Vector3D static constexpr APPROXIMATE_VIEW_UP = Vector3D(0.00967967, 0.000679879, 1.);
 
@@ -37,10 +39,12 @@ namespace nyas
             , _figure_u(0.)
             , _figure_v(0.)
         {}
-        explicit Camera(Length2D const& figure_size,
-                        Point3D const& figure_center,
-                        Vector3D const& figure_u,
-                        Vector3D const& figure_v)
+        explicit Camera(
+            Length2D const& figure_size,
+            Point3D const& figure_center,
+            Vector3D const& figure_u,
+            Vector3D const& figure_v
+        )
             : _figure(figure_size)
             , _figure_center(figure_center)
             , _figure_u(figure_u)
@@ -50,50 +54,59 @@ namespace nyas
 
         bool virtual inline valid() const
         {
-            return _figure.valid() && !(near_to_zero(_figure_u) || near_to_zero(_figure_v));
+            return this->_figure.valid() && !(near_to_zero(this->_figure_u) || near_to_zero(this->_figure_v));
         }
 
-        void inline set_figure_direction_u(Vector3D const& u)
+        Camera inline & set_figure_direction_u(Vector3D const& u)
         {
-            _figure_u = u;
+            this->_figure_u = u;
+            return *this;
+
         }
-        void inline set_figure_direction_v(Vector3D const& v)
+        Camera inline & set_figure_direction_v(Vector3D const& v)
         {
-            _figure_v = v;
+            this->_figure_v = v;
+            return *this;
         }
-        void inline set_figure_directions(Vector3D const& u, Vector3D const& v)
+        Camera inline & set_figure_directions(Vector3D const& u, Vector3D const& v)
         {
-            _figure_u = u;
-            _figure_v = v;
+            this->_figure_u = u;
+            this->_figure_v = v;
+            return *this;
         }
-        void inline set_figure_center(Point3D const& c)
+        Camera inline & set_figure_center(Point3D const& c)
         {
-            _figure_center = c;
+            this->_figure_center = c;
+            return *this;
         }
 
         Length2D inline figure_size() const
         {
-            return _figure.size();
+            return this->_figure.size();
         }
         Point3D inline figure_center() const
         {
-            return _figure_center;
+            return this->_figure_center;
         }
         Vector3D inline figure_direction_u() const
         {
-            return _figure_u;
+            return this->_figure_u;
         }
         Vector3D inline figure_direction_v() const
         {
-            return _figure_v;
+            return this->_figure_v;
         }
-        Figure inline & figure()
+        tuple<Vector3D, Vector3D> inline figure_directions() const
         {
-            return _figure;
+            return ::std::make_tuple(this->_figure_u, this->_figure_v);
         }
-        Figure inline const& figure() const
+        GraphicsBuffer inline & figure()
         {
-            return _figure;
+            return this->_figure;
+        }
+        GraphicsBuffer inline const& figure() const
+        {
+            return this->_figure;
         }
 
         /// get point position on figure in 3D-space
@@ -103,9 +116,9 @@ namespace nyas
         {
 #ifdef REDUCE_POINT_CROSS_BORDER
             Point2D const reduce = reduce_over01(p * 0.5 + 0.5) * 2. - 1.;
-            return _figure_center + reduce.x * _figure_u + reduce.y * _figure_v;
+            return this->_figure_center + reduce.x * this->_figure_u + reduce.y * this->_figure_v;
 #else
-            return _figure_center + p.x * _figure_u + p.y * _figure_v;
+            return this->_figure_center + p.x * this->_figure_u + p.y * this->_figure_v;
 #endif
         }
 
@@ -114,13 +127,13 @@ namespace nyas
         /// @param i pixel index on figure in range [0, width] * [0, height]
         Point3D inline at(Length2D const& i) const
         {
-            Point2D const static inverse_size = 1. / Point2D(_figure.size());
+            Point2D const static inverse_size = 1. / Point2D(this->_figure.size());
 #ifdef REDUCE_POINT_CROSS_BORDER
             Point2D p = reduce_over01(Point2D(i) * inverse_size) * 2. - 1.;
 #else
             Point2D p = Point2D(i) * inverse_size * 2. - 1.;
 #endif
-            return _figure_center + p.x * _figure_u + p.y * _figure_v;
+            return this->_figure_center + p.x * this->_figure_u + p.y * this->_figure_v;
         }
 
         /// get pixel index on figure
@@ -128,7 +141,7 @@ namespace nyas
         /// @param p floating-point vector in range [-1, 1]^2
         Length2D inline on_figure(Point2D const& p) const
         {
-            Point2D const static size = Point2D(_figure.size());
+            Point2D const static size = Point2D(this->_figure.size());
 #ifdef REDUCE_POINT_CROSS_BORDER
             return Length2D(reduce_over01(p * 0.5 + 0.5) * size);
 #else
@@ -141,7 +154,7 @@ namespace nyas
         /// @param i pixel index on figure in range [0, width] * [0, height]
         Point2D inline on_figure(Length2D const& i) const
         {
-            Point2D const static inverse_size = 1. / Point2D(_figure.size());
+            Point2D const static inverse_size = 1. / Point2D(this->_figure.size());
 #ifdef REDUCE_POINT_CROSS_BORDER
             return reduce_over01(Point2D(i) * inverse_size) * 2. - 1.;
 #else
@@ -161,7 +174,7 @@ namespace nyas
 
 
     protected:
-        Figure _figure;
+        GraphicsBuffer _figure;
         Point3D _figure_center;
         Vector3D _figure_u;
         Vector3D _figure_v;
@@ -171,25 +184,27 @@ namespace nyas
     typedef std::shared_ptr<Camera const> CameraConstptr;
 
 
-    /// set correct view_direction and return correct view_up with azimuth, zenith angle and tilt angle
+    /// return correct view_direction and view_up with azimuth, zenith angle and tilt angle
     ///
     /// @param azimuth angle between projection of view_direction on xOy plane and x axis
     /// @param zenith_angle angle between view_direction and z axis
     /// @param tilt_angle angle at camera rotates around view_direction
-    /// @param view_direction view_direction output
-    Vector3D inline correct_view(float64 azimuth, float64 zenith_angle, float64 tilt_angle,
-                                 Vector3D & view_direction)
+    tuple<Vector3D, Vector3D> inline correct_view(
+        float64 const& azimuth,
+        float64 const& zenith_angle,
+        float64 const& tilt_angle
+    )
     {
-        float64 sa = sin(azimuth), ca = cos(azimuth);
-        float64 sz = sin(zenith_angle), cz = cos(zenith_angle);
-        float64 st = sin(tilt_angle), ct = cos(tilt_angle);
-        view_direction.x = ca * sz;
-        view_direction.y = sa * sz;
-        view_direction.z = cz;
-        return Vector3D(
-            sa * st - ca * cz * ct,
-            -ca * st - sa * cz * ct,
-            sz * ct
+        float64 const sa = sin(azimuth), ca = cos(azimuth);
+        float64 const sz = sin(zenith_angle), cz = cos(zenith_angle);
+        float64 const st = sin(tilt_angle), ct = cos(tilt_angle);
+        return ::std::make_tuple(
+            Vector3D(ca * sz, sa * sz, cz),
+            Vector3D(
+                sa * st - ca * cz * ct,
+                -ca * st - sa * cz * ct,
+                sz * ct
+            )
         );
     }
 

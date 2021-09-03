@@ -2,9 +2,6 @@
 
 ////#include "glm/glm.hpp"
 #include "examples.hpp"
-#include "cameras/Camera.hpp"
-#include "cameras/Parallel.hpp"
-#include "cameras/Pinhole.hpp"
 
 
 int main() {
