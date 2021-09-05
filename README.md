@@ -14,9 +14,9 @@ Target: A fully functional render process.
 
 + Deleted `CMakeLists.txt`, beacuse there is only one source file in the entire project.
 
-+ There are some problems when using clang, see [utils.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/utils.hpp)
++ An unknown issue: the camera outputs changed when I changed the compiler. see [outputs/camera](https://github.com/nyasyamorina/nyasRayTracing/tree/master/outputs/camera).
 
-+ An unknown issue: the camera outputs changed when I changed the compiler.
++ Add [common/setup.h](https://github.com/nyasyamorina/nyasRayTracing/blob/master/common/setup.h) to control some functions.
 
 ### 03-09-21
 
