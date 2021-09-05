@@ -1,14 +1,13 @@
 /// @file common/funcions.hpp
 #pragma once
 
-
-#define OVERRANGE_REPEAT_MODE 2       // 0: clamp; 1: cycle roop; 2: mirror reflect
-
-
+#include "setup.h"
 #include "glm/glm.hpp"
 #include "types.hpp"
 #include "constants.hpp"
-#include "fast_inversesqrt.hpp"
+#ifdef USE_FAST_SQUARE_ROOT
+    #include "fast_inversesqrt.hpp"
+#endif
 
 
 namespace nyas
@@ -50,7 +49,7 @@ namespace nyas
     /* define new math functions */
 
     template<length_t L, typename T>
-    vec<L, T> inline pow(vec<L, T> const& v, T exponent)
+    vec<L, T> inline pow(vec<L, T> const& v, T const& exponent)
     {
         static_assert(is_floating_point<T>::value, "'pow' accepts only floating-point input");
         return pow(v, vec<L, T>(exponent));
@@ -176,7 +175,7 @@ namespace nyas
     ///
     /// @tparam genType floating-point type
     template<typename genType>
-    bool constexpr inline near_to_zero(genType x)
+    bool constexpr inline near_to_zero(genType const& x)
     {
         static_assert(is_floating_point<genType>::value, "'near_to_zero' only accepts floating-point input");
         return _detail::_near_to_zero<1, genType>(x);
@@ -200,17 +199,14 @@ namespace nyas
         {
             return vec<3, T>(static_cast<T>(0));
         }
-
         vec<3, T> static constexpr inline X()
         {
             return vec<3, T>(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0));
         }
-
         vec<3, T> static constexpr inline Y()
         {
             return vec<3, T>(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0));
         }
-
         vec<3, T> static constexpr inline Z()
         {
             return vec<3, T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1));
@@ -224,12 +220,10 @@ namespace nyas
         {
             return vec<2, T>(static_cast<T>(0));
         }
-
         vec<2, T> static constexpr inline X()
         {
             return vec<2, T>(static_cast<T>(1), static_cast<T>(0));
         }
-
         vec<2, T> static constexpr inline Y()
         {
             return vec<2, T>(static_cast<T>(0), static_cast<T>(1));
@@ -257,7 +251,7 @@ namespace nyas
     }
 
 
-#ifdef FAST_INVERSE_SQUARE_ROOT
+#ifdef USE_FAST_SQUARE_ROOT
 
     namespace _detail   // ! user should not use namespace '_detail'
     {

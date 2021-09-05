@@ -1,7 +1,10 @@
 /// @file utils.hpp
 #pragma once
 
+#include "common/setup.h"
+#include "common/types.hpp"
 #include <string>
+#include <functional>
 #ifdef WIN32    // Windows
     #include <direct.h>
     #include <io.h>
@@ -17,13 +20,15 @@
 namespace nyas
 {
     using ::std::string;
+    using ::std::function;
+
 
     // ! This code is from Internet, feasibility to be verified
     /// make directory if not exists, true for directory successfully created or already exists
     bool makedir(char const* path)
     {
-        if (access(path, 0) == -1) {
-            return mkdir(path
+        if (_access(path, 0) == -1) {
+            return _mkdir(path
 #ifndef WIN32
                 , S_IRWXU
 #endif
@@ -38,12 +43,15 @@ namespace nyas
     }
 
 
-    struct DirectoryNode
+    /* mapping operator */
+
+    template<typename FROM, typename TO>
+    void mapping_data(function<TO(FROM const&)> const& func, FROM const* from_data, TO * to_data, length_t const& total)
     {
-        DirectoryNode * _parent;
-        DirectoryNode * _subordinate;
-        char const* _name;
-    };
+        for (length_t i = 0; i < total; ++i) {
+            *(to_data++) = func(*(from_data++));
+        }
+    }
 
 } // namespace nyas
 

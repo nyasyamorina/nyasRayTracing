@@ -14,7 +14,7 @@ namespace nyas
             Hammersley()
                 : Hammersley(1)
             {}
-            Hammersley(length_t side)
+            Hammersley(length_t const& side)
                 : Sampler(side)
             {
                 if (this->_side_length == 1) {

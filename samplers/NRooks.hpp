@@ -16,7 +16,7 @@ namespace nyas
             NRooks()
                 : NRooks(1)
             {}
-            NRooks(length_t side)
+            NRooks(length_t const& side)
                 : Sampler(side)
             {
                 if (this->_side_length == 1) {

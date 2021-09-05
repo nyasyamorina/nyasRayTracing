@@ -18,7 +18,7 @@ namespace nyas
                 : Camera()
                 , _view_point(0.)
             {}
-            explicit Pinhole(length_t figure_width, length_t figure_height)
+            explicit Pinhole(length_t const& figure_width, length_t const& figure_height)
                 : Camera(figure_width, figure_height)
                 , _view_point(0.)
             {}
@@ -66,9 +66,9 @@ namespace nyas
                 return Ray(
                     p3,
 #ifdef GET_RAY_WITH_NORMALIZE
-                    normalize(p3 - _view_point)
+                    normalize(p3 - this->_view_point)
 #else
-                    p3 - _view_point
+                    p3 - this->_view_point
 #endif
                 );
             }
@@ -82,9 +82,9 @@ namespace nyas
                 return Ray(
                     p3,
 #ifdef GET_RAY_WITH_NORMALIZE
-                    normalize(p3 - _view_point)
+                    normalize(p3 - this->_view_point)
 #else
-                    p3 - _view_point
+                    p3 - this->_view_point
 #endif
                 );
             }
@@ -105,7 +105,7 @@ namespace nyas
             Length2D const& figure_size,
             Point3D const& view_point,
             Vector3D const& view_direction,
-            float64 fov,
+            float64 const& fov,
             Vector3D const& view_up = Camera::DEFAULT_VIEW_UP
         )
         {

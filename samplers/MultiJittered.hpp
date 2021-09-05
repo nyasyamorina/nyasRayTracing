@@ -15,7 +15,7 @@ namespace nyas
             MultiJittered()
                 : MultiJittered(1)
             {}
-            MultiJittered(length_t side)
+            MultiJittered(length_t const& side)
                 : Sampler(side)
             {
                 if (this->_side_length == 1) {

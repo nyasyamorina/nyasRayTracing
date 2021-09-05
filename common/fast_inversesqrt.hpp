@@ -1,10 +1,6 @@
 /// @file common/fast_inversesqrt.hpp
 #pragma once
 
-
-#define FAST_INVERSE_SQUARE_ROOT
-
-
 #include "types.hpp"
 #include <bit>
 
@@ -22,7 +18,7 @@ namespace nyas
             }
         };
 
-        template <>
+        template<>
         struct fast_inversesqrt<float32>
         {
             float32 static inline constexpr call(float32 x)
@@ -35,7 +31,7 @@ namespace nyas
             }
         };
 
-        template <>
+        template<>
         struct fast_inversesqrt<float64>
         {
             float64 static inline constexpr call(float64 x)

@@ -14,7 +14,7 @@ namespace nyas
             Regular()
                 : Regular(1)
             {}
-            Regular(length_t side)
+            Regular(length_t const& side)
                 : Sampler(side)
             {
                 this->_generate_samples();

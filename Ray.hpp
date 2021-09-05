@@ -6,7 +6,7 @@
 
 namespace nyas
 {
-    struct Ray
+    struct Ray final
     {
         Point3D origin;
         Vector3D direction;
@@ -23,7 +23,7 @@ namespace nyas
         Ray & operator=(Ray const&) = default;
 
         /// return ray position by passing time t
-        Point3D inline at(float64 t) const
+        Point3D inline at(float64 const& t) const
         {
             return this->origin + this->direction * t;
         }

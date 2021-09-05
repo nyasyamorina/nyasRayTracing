@@ -1,7 +1,9 @@
 /// @file Buffer2D.hpp
 #pragma once
 
+#include "common/setup.h"
 #include "common/types.hpp"
+#include "utils.hpp"
 #include <assert.h>
 #include <memory>
 #include <cstring>
@@ -48,10 +50,10 @@ namespace nyas
                 this->_data = data_ptr;
             }
         }
-        explicit Buffer2D(length_t width, length_t height)
+        explicit Buffer2D(length_t const& width, length_t const& height)
             : Buffer2D(Length2D(width, height))
         {}
-        explicit Buffer2D(length_t width, length_t height, Data * const data_ptr, bool copy = true)
+        explicit Buffer2D(length_t const& width, length_t const& height, Data * const data_ptr, bool const& copy = true)
             : Buffer2D(Length2D(width, height), data_ptr, copy)
         {}
         Buffer2D(Buffer2D<Data> const& buff)
@@ -100,7 +102,27 @@ namespace nyas
             return this->_data;
         }
 
-        /* access element */
+        /* position conversion */
+        Point2D inline at(Length2D const& index) const
+        {
+            Point2D const static inverse_size = 1. / Point2D(this->_size);
+#ifdef REDUCE_POINT_BEYOND_RANGE
+            return reduce_over01(Point2D(index) * inverse_size) * 2. - 1.;
+#else
+            return Point2D(index) * inverse_size * 2. - 1.;
+#endif
+        }
+        Length2D inline at(Point2D const& position) const
+        {
+            Point2D const static size = Point2D(this->_size);
+#ifdef REDUCE_POINT_BEYOND_RANGE
+            return Length2D(reduce_over01(position * 0.5 + 0.5) * size);
+#else
+            return Length2D((position * 0.5 + 0.5) * size);
+#endif
+        }
+
+        /* access elements */
         Data inline & operator()(Length2D const& index)
         {
             assert(0 <= index.x && index.x < _size.x && 0 <= index.y && index.y < _size.y);
@@ -111,16 +133,16 @@ namespace nyas
             assert(0 <= index.x && index.x < _size.x && 0 <= index.y && index.y < _size.y);
             return *(this->_data + (index.y * this->_size.x + index.x));
         }
-        Data inline & operator()(length_t x, length_t y)
+        Data inline & operator()(length_t const& x, length_t const& y)
         {
             return this->operator()(Length2D(x, y));
         }
-        Data inline const& operator()(length_t x, length_t y) const
+        Data inline const& operator()(length_t const& x, length_t const& y) const
         {
             return this->operator()(Length2D(x, y));
         }
 
-        /* conversion */
+        /* converse elements */
         Buffer2D & for_each(ConverFunc const& func)
         {
             Data * iter = this->_data;
@@ -150,12 +172,7 @@ namespace nyas
         {
             Buffer2D<U> buff(this->_size);
             if (buff.data_pointer() != nullptr) {
-                U * new_data_pointer = buff.data_pointer();
-                Data const* old_data_pointer = this->_data;
-                length_t const total = this->total();
-                for (length_t i = 0; i < total; ++i) {
-                    *(new_data_pointer++) = func(*(old_data_pointer++));
-                }
+                mapping_data(func, this->_data, buff.data_pointer(), this->total());
             }
             return buff;
         }
@@ -164,12 +181,8 @@ namespace nyas
         {
             assert(buff.size() == this->_size);
             length_t const total = this->total();
-            if (buff.data_pointer() != nullptr && buff.total() == total) {
-                U * new_data_pointer = buff.data_pointer();
-                Data const* old_data_pointer = this->_data;
-                for (length_t i = 0; i < total; ++i) {
-                    *(new_data_pointer++) = func(*(old_data_pointer++));
-                }
+            if (buff.data_pointer() != nullptr && buff.total() >= total) {
+                mapping_data(func, this->_data, buff.data_pointer(), total);
             }
             return buff;
         }
@@ -214,7 +227,6 @@ namespace nyas
         length_t const align = width % 4;
         length_t buffer_size = (3 * width + align) * height;
         length_t file_size = buffer_size + 54;
-        length_t const color_depth = 24;
 
         uint8 header[54] = {
             66, 77, 88, 88, 88, 88,  0,  0,  0,  0, 54,  0,  0,  0, 40,  0,
@@ -248,7 +260,6 @@ namespace nyas
         }
         outfile.close();
     }
-
     void inline save_bmp(string const& str, ImageBuffer const& buff)
     {
         save_bmp(str.c_str(), buff);

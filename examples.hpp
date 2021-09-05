@@ -70,7 +70,7 @@ namespace nyas
             return;
         /* use pixel index rendering color into gbuff */
         gbuff.for_each_index(
-            [&width, &height] (Length2D const& index, RGBColor & pixel) {      // rendering method
+            [] (Length2D const& index, RGBColor & pixel) {      // rendering method
                 pixel.r = float(index.x) / (width - 1);
                 pixel.g = float(index.y) / (height - 1);
                 pixel.b = 0.2f;
@@ -209,10 +209,10 @@ namespace nyas
             else if (t_floor >= 0. && (t_floor < t_ball || t_ball < 0.)) {
                 hitting_point = ray.at(t_floor);
                 if (int(mod(floor(hitting_point.x) + floor(hitting_point.y), 2.)) == 1) {
-                    return RGBColor(0.1);       // checkerboard color 1
+                    return RGBColor(0.1f);       // checkerboard color 1
                 }
                 else {
-                    return RGBColor(0.9);       // checkerboard color 2
+                    return RGBColor(0.9f);       // checkerboard color 2
                 }
             }
             // if ray does not hit anything

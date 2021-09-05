@@ -18,7 +18,7 @@ namespace nyas
                 : Camera()
                 , _view_direction(0.)
             {}
-            explicit Parallel(length_t figure_width, length_t figure_height)
+            explicit Parallel(length_t const& figure_width, length_t const& figure_height)
                 : Camera(figure_width, figure_height)
                 , _view_direction(0.)
             {}
@@ -97,7 +97,7 @@ namespace nyas
         /// @param figure_width_scalar length of figure width in 3D-space
         ParallelPtr default_parallel(
             Length2D const& figure_size,
-            float64 figure_width_scalar,
+            float64 const& figure_width_scalar,
             Point3D const& figure_center,
             Vector3D const& view_direction,
             Vector3D const& view_up = Camera::DEFAULT_VIEW_UP

@@ -12,7 +12,7 @@ namespace nyas
     /// Take multi samples in single pixel.
     /// number of samples should be perfect square.
     ///
-    /// @param n side length of sampler grid
+    /// @param side side length of sampler grid
     class Sampler
     {
     public:
@@ -22,32 +22,32 @@ namespace nyas
         /// mapping a 2D point into r=1 2D-disk (unit-circle)
         ///
         /// @param p point in unit-square (range [0, 1]^2)
-        Point2D static map_to_circle(Point2D const& p)
+        Point2D static map_to_circle(Point2D p)
         {
-            Point2D const point = p * 2. - 1.;
-            if (near_to_zero(point)) {
+            p *= 2.; p -= 1.;
+            if (near_to_zero(p)) {
                 return Point2D(0.);
             }
             float64 constexpr pi_over_4 = quarter_pi<float64>();
             float64 r, phi;
-            if (point.x > -point.y) {
-                if (point.x > point.y) {
-                    r = point.x;
-                    phi = point.y / point.x;
+            if (p.x > -p.y) {
+                if (p.x > p.y) {
+                    r = p.x;
+                    phi = p.y / p.x;
                 }
                 else {
-                    r = point.y;
-                    phi = 2. - point.x / point.y;
+                    r = p.y;
+                    phi = 2. - p.x / p.y;
                 }
             }
             else {
-                if (point.x < point.y) {
-                    r = -point.x;
-                    phi = 4. + point.y / point.x;
+                if (p.x < p.y) {
+                    r = -p.x;
+                    phi = 4. + p.y / p.x;
                 }
                 else {
-                    r = -point.y;
-                    phi = 6. - point.x / point.y;
+                    r = -p.y;
+                    phi = 6. - p.x / p.y;
                 }
             }
             phi *= pi_over_4;
@@ -59,9 +59,9 @@ namespace nyas
         /// @param p point in unit-square (range [0, 1]^2)
         Point3D static map_to_hemisphere(Point2D const& p, float64 const& e)
         {
-            float64 constexpr two_pi = ::nyas::two_pi<float64>();
-            float64 const cos_phi = cos(two_pi * p.x);
-            float64 const sin_phi = sin(two_pi * p.x);
+            float64 constexpr tau = two_pi<float64>();
+            float64 const cos_phi = cos(tau * p.x);
+            float64 const sin_phi = sin(tau * p.x);
             float64 const cos_theta = pow(1. - p.y, 1. / (e + 1.));
             float64 const sin_theta = sqrt(1. - cos_theta * cos_theta);
             return Point3D(sin_theta * cos_phi, sin_theta * sin_phi, cos_theta);
@@ -103,7 +103,7 @@ namespace nyas
         SampleList _samples;
         length_t _count;
 
-        Sampler(length_t side)
+        Sampler(length_t const& side)
             : _side_length(side)
             , _num_samples(side * side)
             , _count(0)

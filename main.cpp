@@ -1,5 +1,3 @@
-#include <iostream>
-
 ////#include "glm/glm.hpp"
 #include "examples.hpp"
 

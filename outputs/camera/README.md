@@ -19,3 +19,11 @@ example programs: [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/
 **example_cameras** (pinhole3.bmp)
 
 ![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/pinhole3.bmp)
+
+---
+
+## Unknown Issue:
+
+The camera outputs changed when I changed the compiler. Compared:
+
+![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/issue1.png)

@@ -9,7 +9,6 @@
 #include <tuple>
 
 
-#define REDUCE_POINT_CROSS_BORDER
 //#define GET_RAY_WITH_NORMALIZE
 
 
@@ -30,7 +29,7 @@ namespace nyas
         Camera()
             : Camera(Length2D(1))
         {}
-        explicit Camera(length_t figure_width, length_t figure_height)
+        explicit Camera(length_t const& figure_width, length_t const& figure_height)
             : Camera(Length2D(figure_width, figure_height))
         {}
         explicit Camera(Length2D const& figure_size)
@@ -50,6 +49,9 @@ namespace nyas
             , _figure_u(figure_u)
             , _figure_v(figure_v)
         {}
+
+        /* Destructor */
+        virtual ~Camera() = default;
 
 
         bool virtual inline valid() const
@@ -134,32 +136,6 @@ namespace nyas
             Point2D p = Point2D(i) * inverse_size * 2. - 1.;
 #endif
             return this->_figure_center + p.x * this->_figure_u + p.y * this->_figure_v;
-        }
-
-        /// get pixel index on figure
-        ///
-        /// @param p floating-point vector in range [-1, 1]^2
-        Length2D inline on_figure(Point2D const& p) const
-        {
-            Point2D const static size = Point2D(this->_figure.size());
-#ifdef REDUCE_POINT_CROSS_BORDER
-            return Length2D(reduce_over01(p * 0.5 + 0.5) * size);
-#else
-            return Length2D((p * 0.5 + 0.5) * size);
-#endif
-        }
-
-        /// get point position on figure in 2D-space
-        ///
-        /// @param i pixel index on figure in range [0, width] * [0, height]
-        Point2D inline on_figure(Length2D const& i) const
-        {
-            Point2D const static inverse_size = 1. / Point2D(this->_figure.size());
-#ifdef REDUCE_POINT_CROSS_BORDER
-            return reduce_over01(Point2D(i) * inverse_size) * 2. - 1.;
-#else
-            return Point2D(i) * inverse_size * 2. - 1.;
-#endif
         }
 
         /// get ray on figure in 3D-space

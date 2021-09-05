@@ -1,10 +1,7 @@
 /// @file common/randoms.hpp
 #pragma once
 
-
-//#define RANDOM_WITH_TIME
-
-
+#include "setup.h"
 #include "types.hpp"
 #include <random>
 #include <limits>
@@ -22,7 +19,7 @@ namespace nyas
 #endif
 
         // ganerate global random generator seed
-        std::minstd_rand0 static seed_generator(
+        ::std::minstd_rand0 static seed_generator(
 #ifdef RANDOM_WITH_TIME
             static_cast<uint32>(system_clock::to_time_t(time_point_cast<milliseconds>(system_clock::now())))
 #else
@@ -31,9 +28,9 @@ namespace nyas
         );
 
         // random generator in each thread
-        std::mt19937 static thread_local random_generator(seed_generator());
+        ::std::mt19937 static thread_local random_generator(seed_generator());
 
-        std::uniform_real_distribution static thread_local distribution01;
+        ::std::uniform_real_distribution<float64> static thread_local distribution01;
 
     } // namespace _detail
 
@@ -50,7 +47,7 @@ namespace nyas
             return _detail::distribution01(_detail::random_generator);
         }
 
-        float64 inline uniform(float64 min, float64 max)
+        float64 inline uniform(float64 const& min, float64 const& max)
         {
             return (max - min) * uniform() + min;
         }

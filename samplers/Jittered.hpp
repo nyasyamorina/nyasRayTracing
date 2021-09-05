@@ -15,7 +15,7 @@ namespace nyas
             Jittered()
                 : Jittered(1)
             {}
-            Jittered(length_t side)
+            Jittered(length_t const& side)
                 : Sampler(side)
             {
                 if (this->_side_length == 1) {

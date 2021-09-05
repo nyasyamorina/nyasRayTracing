@@ -15,7 +15,7 @@ namespace nyas
             PureRandom()
                 : PureRandom(1)
             {}
-            PureRandom(length_t side)
+            PureRandom(length_t const& side)
                 : Sampler(side)
             {
                 if (this->_side_length == 1) {

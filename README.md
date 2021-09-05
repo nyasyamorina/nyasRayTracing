@@ -10,6 +10,14 @@ Target: A fully functional render process.
 
 ## Update Log
 
+### 05-09-21
+
++ Deleted `CMakeLists.txt`, beacuse there is only one source file in the entire project.
+
++ There are some problems when using clang, see [utils.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/utils.hpp)
+
++ An unknown issue: the camera outputs changed when I changed the compiler.
+
 ### 03-09-21
 
 + Use more general `Buffer2D` instead of `GraphicsBuffer`.
@@ -67,8 +75,6 @@ Target: A fully functional render process.
 
 ### 02-08-21
 
-+ Refactored directories, see `Need some Helps` on bottom.
-
 + Added 2D graphics buffer in `GraphicsBuffer.hpp`. now it can render and output a simple [outputs](https://github.com/nyasyamorina/nyasRayTracing/tree/master/outputs).
 
 ### 01-08-21
@@ -77,14 +83,6 @@ Target: A fully functional render process.
 
 ---
 
+**Using C++20.**
+
 **Using third-party libraries [glm](https://github.com/g-truc/glm) to provide math support.**
-
----
-
-## Need some Helps
-
-I don't known how to use multi source file in cmake, so I put all methods into a big header file.
-
-When I use multi source file in cmake, it always throws errors: `undefined reference to function`, and I tried some fixing methods on the internet, but all of them didn't work.
-
-If someone know how to fix this problem, please contect me at `QQ: 1275935966` or `email: 1275935966@qq.com`
