@@ -6,7 +6,7 @@ example programs: [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/
 
 **example_cameras** (parallel1.bmp)
 
-![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/parallele1.bmp)
+![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/parallel1.bmp)
 
 **example_cameras** (pinhole1.bmp)
 

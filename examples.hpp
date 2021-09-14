@@ -308,6 +308,7 @@ namespace nyas
         gamma_correction(figure);
         save_bmp(output_dir + "simple_scenes.bmp", map_to_image(figure));
 
+        /* clean up */
         delete &world;
         cout << endl;
     }

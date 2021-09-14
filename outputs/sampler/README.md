@@ -20,9 +20,9 @@ example programs: [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/
 
 ![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/sampler/n-Rooks.bmp)
 
-**example_samplers** (multiJittered.bmp)
+**example_samplers** (multi-jittered.bmp)
 
-![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/sampler/multiJittered.bmp)
+![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/sampler/multi-jittered.bmp)
 
 **example_samplers** (hammersley.bmp)
 
