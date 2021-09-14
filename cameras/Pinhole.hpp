@@ -1,8 +1,8 @@
 /// @file cameras/Pinhole.hpp
 #pragma once
 
-#include "../common/types.hpp"
 #include "Camera.hpp"
+#include "../common/types.hpp"
 #include <memory>
 
 
@@ -14,10 +14,6 @@ namespace nyas
         {
         public:
             /* Constructors */
-            Pinhole()
-                : Camera()
-                , _view_point(0.)
-            {}
             explicit Pinhole(length_t const& figure_width, length_t const& figure_height)
                 : Camera(figure_width, figure_height)
                 , _view_point(0.)
@@ -31,9 +27,10 @@ namespace nyas
                 Point3D const& figure_center,
                 Vector3D const& figure_u,
                 Vector3D const& figure_v,
+                SamplerPtr const& sampler,
                 Point3D const& view_point
             )
-                : Camera(figure_size, figure_center, figure_u, figure_v)
+                : Camera(figure_size, figure_center, figure_u, figure_v, sampler)
                 , _view_point(view_point)
             {}
 
@@ -62,15 +59,8 @@ namespace nyas
             /// @param p floating-point vector in range [-1, 1]
             Ray virtual inline get_ray(Point2D const& p) const override
             {
-                Point3D const p3 = at(p);
-                return Ray(
-                    p3,
-#ifdef GET_RAY_WITH_NORMALIZE
-                    normalize(p3 - this->_view_point)
-#else
-                    p3 - this->_view_point
-#endif
-                );
+                Point3D const p3 = this->at(p);
+                return Ray(p3, p3 - this->_view_point);
             }
 
             /// get ray on figure in 3D-space
@@ -78,15 +68,14 @@ namespace nyas
             /// @param i pixel index on figure in range [0, width] * [0, height]
             Ray virtual inline get_ray(Length2D const& i) const override
             {
-                Point3D const p3 = at(i);
-                return Ray(
-                    p3,
-#ifdef GET_RAY_WITH_NORMALIZE
-                    normalize(p3 - this->_view_point)
-#else
-                    p3 - this->_view_point
-#endif
-                );
+                Point3D const p3 = this->at(i);
+                return Ray(p3, p3 - this->_view_point);
+            }
+
+            Ray virtual get_ray_sample(Length2D const& i) const override
+            {
+                Point3D const p3 = this->at((Point2D(i) + this->_sampler->sample_uniform2D()) * this->_inverse_figure_size * 2. - 1.);
+                return Ray(p3, p3 - this->_view_point);
             }
 
 
@@ -94,8 +83,8 @@ namespace nyas
             Point3D _view_point;
         };
 
-        typedef std::shared_ptr<Pinhole> PinholePtr;
-        typedef std::shared_ptr<Pinhole const> PinholeConstptr;
+        typedef shared_ptr<Pinhole> PinholePtr;
+        typedef shared_ptr<Pinhole const> PinholeConstptr;
 
 
         /// get a default pinhole camera
@@ -111,7 +100,7 @@ namespace nyas
         {
             float64 constexpr view_distance = 1.;       // looks like view_distance is useless in pinhole camera
             float64 const scalar = view_distance * tan(0.5 * fov);
-            PinholePtr pinhole = std::make_shared<Pinhole>(figure_size);
+            PinholePtr pinhole = make_shared<Pinhole>(figure_size);
             pinhole->set_view_point(view_point);
             pinhole->set_figure_center(view_point + view_distance * normalize(view_direction));
             pinhole->set_figure_direction_u(scalar * normalize(cross(view_direction, view_up)));

@@ -1,44 +1,48 @@
 /// @file samplers/Jittered.hpp
 #pragma once
 
-#include "Sampler.hpp"
+#include "SamplesGenerator.hpp"
+#include "../common/functions.hpp"
 #include "../common/randoms.hpp"
 
 
 namespace nyas
 {
-    namespace samplers
+    namespace samples_generators
     {
-        class Jittered final : public Sampler
+        /// jittered samples generator
+        ///
+        /// @param num_samples should be squared number
+        class Jittered final : public SamplesGenerator
         {
         public:
-            Jittered()
-                : Jittered(1)
-            {}
-            Jittered(length_t const& side)
-                : Sampler(side)
+            explicit Jittered(length_t const& num_sets, length_t const& num_samples)
+                : SamplesGenerator(num_sets)
             {
-                if (this->_side_length == 1) {
-                    this->_samples.push_back(Point2D(0.5));
+                this->_num_side = length_t(sqrt(float64(num_samples)));
+                this->_num_samples = this->_num_side * this->_num_side;
+            }
+
+            SampleList virtual generate_samples() const override
+            {
+                float64 const cell_size = 1. / this->_num_side;
+                SampleList list;
+                list.reserve(this->_num_sets * this->_num_samples);
+                for (length_t s = 0; s < this->_num_sets; ++s) {
+                    for (length_t y = 0; y < this->_num_side; ++y) {
+                        for (length_t x = 0; x < this->_num_side; ++x) {
+                            list.push_back((Point2D(x, y) + random::uniform2D()) * cell_size);
+                        }
+                    }
                 }
-                else {
-                    this->_generate_samples();
-                }
+                return list;
             }
 
 
         private:
-            void virtual _generate_samples() override
-            {
-                float64 const cell_size = 1. / static_cast<float64>(this->_side_length);
-                for (length_t y = 0; y < this->_side_length; ++y) {
-                    for (length_t x = 0; x < this->_side_length; ++x) {
-                        this->_samples.push_back((Point2D(x, y) + random::uniform2D()) * cell_size);
-                    }
-                }
-            }
+            length_t _num_side;
         };
 
-    } // namespace sampler
+    } // namespace samples_generators
 
 } // namespace nyas

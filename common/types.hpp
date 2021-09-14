@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 #include <type_traits>
 #include <string>
+#include <memory>
 
 
 namespace nyas
@@ -38,5 +39,8 @@ namespace nyas
     using ::std::is_integral;
 
     using ::std::string;
+
+    using ::std::shared_ptr;
+    using ::std::make_shared;
 
 } // namespace nyas

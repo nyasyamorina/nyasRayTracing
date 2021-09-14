@@ -23,8 +23,8 @@
 // otherwise, each run of program produces the same result
 //#define RANDOM_WITH_TIME
 
-// control how to ruduce numbers/points beyond range [0, 1]
-// 0: clamp; 1: cycle roop; 2: mirror reflect; other: not define
+// control how to reduce numbers/points beyond range [0, 1]
+// 0: clamp; 1: cycle loop; 2: mirror reflect; other: not define
 #define OVERRANGE_REPEAT_MODE 2
 
 // control reduce points beyond range on Buffer2D or not

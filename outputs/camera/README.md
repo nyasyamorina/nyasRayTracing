@@ -1,10 +1,10 @@
-# Example ouputs
+# Example outputs
 
 example programs: [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/examples.hpp)
 
 ---
 
-**example_cameras** (parallele1.bmp)
+**example_cameras** (parallel1.bmp)
 
 ![image](https://raw.githubusercontent.com/nyasyamorina/nyasRayTracing/master/outputs/camera/parallele1.bmp)
 

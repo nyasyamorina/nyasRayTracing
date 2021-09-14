@@ -5,7 +5,6 @@
 #include "common/types.hpp"
 #include "utils.hpp"
 #include <assert.h>
-#include <memory>
 #include <cstring>
 #include <functional>
 #include <fstream>
@@ -193,8 +192,8 @@ namespace nyas
         Data * _data;
     };
 
-    template<typename T> using Buffer2DPtr = ::std::shared_ptr<Buffer2D<T>>;
-    template<typename T> using Buffer2DConstptr = ::std::shared_ptr<Buffer2D<T> const>;
+    template<typename T> using Buffer2DPtr = shared_ptr<Buffer2D<T>>;
+    template<typename T> using Buffer2DConstptr = shared_ptr<Buffer2D<T> const>;
 
     typedef Buffer2D<RGBColor> GraphicsBuffer;
     typedef Buffer2D<ImageRGBColor> ImageBuffer;
@@ -216,6 +215,23 @@ namespace nyas
     {
         return gbuff.map<ImageRGBColor>(RGBcolor_to_imageRGBcolor, ibuff);
     }
+
+
+    /* gamma correction */
+    float32 constexpr gamma_correction_value = 1.f / 2.2f;
+    RGBColor inline gamma_correction_color(RGBColor const& color)
+    {
+        return pow(color, gamma_correction_value);
+    }
+    void inline gamma_correction_color_builtin(RGBColor & color)
+    {
+        color = pow(color, gamma_correction_value);
+    }
+    GraphicsBuffer inline & gamma_correction(GraphicsBuffer & gbuff)
+    {
+        return gbuff.for_each(gamma_correction_color_builtin);
+    }
+
 
     /* save to image */
 

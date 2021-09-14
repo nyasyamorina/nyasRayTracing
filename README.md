@@ -8,11 +8,38 @@ Target: A fully functional render process.
 
 ---
 
+## Current progress
+
++ Fully functional 2D-buffer for rendering and output an image.
+
++ Implemented two simple cameras.
+
++ Simple bidirectional reflectance distribution function extends from `BRDF`.
+
++ Simple object extends from `Object3D`.
+
++ Simple sky extends from `Sky`.
+
++ A ray tracer using hemisphere model without importance sampling.
+
+---
+
 ## Update Log
+
+### 14-09-21
+
++ Add some necessary file for ray tracing, include [brdfs](https://github.com/nyasyamorina/nyasRayTracing/tree/master/brdfs)
+, [objects](https://github.com/nyasyamorina/nyasRayTracing/tree/master/objects), and more.
+
++ Add a simple ray tracer [HemisphereModel](https://github.com/nyasyamorina/nyasRayTracing/blob/master/tracers/HemisphereModel.hpp).
+
++ Add [World](https://github.com/nyasyamorina/nyasRayTracing/blob/master/World.hpp) store objects, sky and camera, and render scenes.
+
++ Add a simple rendering example `example_simple_scenes`, see output in [outputs](https://github.com/nyasyamorina/nyasRayTracing/tree/master/outputs).
 
 ### 05-09-21
 
-+ Deleted `CMakeLists.txt`, beacuse there is only one source file in the entire project.
++ Deleted `CMakeLists.txt`, because there is only one source file in the entire project.
 
 + An unknown issue: the camera outputs changed when I changed the compiler. see [outputs/camera](https://github.com/nyasyamorina/nyasRayTracing/tree/master/outputs/camera).
 
@@ -32,7 +59,7 @@ Target: A fully functional render process.
 
 + Add example `example_cameras`, see outputs in [outputs/camera](https://github.com/nyasyamorina/nyasRayTracing/tree/master/outputs/camera).
 
-+ refactory output directory.
++ refectory output directory.
 
 ### 18-08-21
 
@@ -69,7 +96,7 @@ Target: A fully functional render process.
 + To fix warning `compound assignment with 'volatile'-qualified left operand is deprecated`
 , you must manually changing `f*=f` to `f=f*f` in glm file `glm/detail/type_half.inl:9`.
 
-+ Unuse `::glm::qualifier` in exposed template type `vec`.
++ Unused `::glm::qualifier` in exposed template type `vec`.
 
 + Add [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/examples.hpp).
 

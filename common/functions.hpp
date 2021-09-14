@@ -15,7 +15,7 @@ namespace nyas
     /// literal suffix 'degree' for angle
     float128 constexpr inline operator""_deg(float128 degree)
     {
-        constexpr float128 to_radian = pi<float128>() / 180.;
+        constexpr float128 to_radian = constants<float128>::pi / 180.;
         return degree * to_radian;
     }
 
@@ -44,6 +44,7 @@ namespace nyas
     using ::glm::cross;
     using ::glm::length;
     using ::glm::distance;
+    using ::glm::mix;
 
 
     /* define new math functions */
@@ -190,45 +191,6 @@ namespace nyas
     {
         return _detail::vec_near_to_zero<L, T>::call(v);
     }
-
-
-    template<typename T>
-    struct axis3D
-    {
-        vec<3, T> static constexpr inline O()
-        {
-            return vec<3, T>(static_cast<T>(0));
-        }
-        vec<3, T> static constexpr inline X()
-        {
-            return vec<3, T>(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0));
-        }
-        vec<3, T> static constexpr inline Y()
-        {
-            return vec<3, T>(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0));
-        }
-        vec<3, T> static constexpr inline Z()
-        {
-            return vec<3, T>(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1));
-        }
-    };
-
-    template<typename T>
-    struct axis2D
-    {
-        vec<2, T> static constexpr inline O()
-        {
-            return vec<2, T>(static_cast<T>(0));
-        }
-        vec<2, T> static constexpr inline X()
-        {
-            return vec<2, T>(static_cast<T>(1), static_cast<T>(0));
-        }
-        vec<2, T> static constexpr inline Y()
-        {
-            return vec<2, T>(static_cast<T>(0), static_cast<T>(1));
-        }
-    };
 
 
     /// Reduce number into range [0, 1], control by macro "OVERRANGE_REPEAT_MODE"

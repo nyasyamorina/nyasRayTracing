@@ -18,7 +18,7 @@ namespace nyas
         using namespace std::chrono;
 #endif
 
-        // ganerate global random generator seed
+        // generate global random generator seed
         ::std::minstd_rand0 static seed_generator(
 #ifdef RANDOM_WITH_TIME
             static_cast<uint32>(system_clock::to_time_t(time_point_cast<milliseconds>(system_clock::now())))

@@ -1,4 +1,5 @@
 ////#include "glm/glm.hpp"
+#include "nyasRayTracing.hpp"
 #include "examples.hpp"
 
 
@@ -10,4 +11,6 @@ int main() {
     nyas::example_samplers();
 
     nyas::example_cameras();
+
+    nyas::example_simple_scenes();
 }

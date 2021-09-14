@@ -1,41 +1,35 @@
-/// @file samplers/PureRandom
+/// @file samplers/PureRandom.hpp
 #pragma once
 
-#include "Sampler.hpp"
+#include "SamplesGenerator.hpp"
 #include "../common/randoms.hpp"
 
 
 namespace nyas
 {
-    namespace samplers
+    namespace samples_generators
     {
-        class PureRandom final : public Sampler
+        /// pure random samples generator
+        class PureRandom final : public SamplesGenerator
         {
         public:
-            PureRandom()
-                : PureRandom(1)
+            explicit PureRandom(length_t const& num_sets, length_t const& num_samples)
+                : SamplesGenerator(num_sets, num_samples)
             {}
-            PureRandom(length_t const& side)
-                : Sampler(side)
-            {
-                if (this->_side_length == 1) {
-                    this->_samples.push_back(Point2D(0.5));
-                }
-                else {
-                    this->_generate_samples();
-                }
-            }
 
-
-        private:
-            void virtual _generate_samples() override
+            SampleList virtual generate_samples() const override
             {
-                for (length_t i = 0; i < this->_num_samples; ++i) {
-                    this->_samples.push_back(random::uniform2D());
+                SampleList list;
+                list.reserve(this->_num_sets * this->_num_samples);
+                for (length_t s = 0; s < this->_num_sets; ++s) {
+                    for(length_t n = 0; n < this->_num_samples; ++n) {
+                        list.push_back(random::uniform2D());
+                    }
                 }
+                return list;
             }
         };
 
-    } // namespace samplers
+    } // namespace samples_generators
 
 } // namespace nyas

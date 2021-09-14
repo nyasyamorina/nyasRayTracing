@@ -1,72 +1,72 @@
 /// @file samplers/Jittered.hpp
 #pragma once
 
-#include "Sampler.hpp"
+#include "SamplesGenerator.hpp"
+#include "../common/functions.hpp"
 #include "../common/randoms.hpp"
+#include <algorithm>
 
 
 namespace nyas
 {
-    namespace samplers
+    namespace samples_generators
     {
-        class MultiJittered final : public Sampler
+        /// multi-jittered samples generator
+        ///
+        /// @param num_samples should be squared number
+        class MultiJittered final : public SamplesGenerator
         {
         public:
-            MultiJittered()
-                : MultiJittered(1)
-            {}
-            MultiJittered(length_t const& side)
-                : Sampler(side)
+            explicit MultiJittered(length_t const& num_sets, length_t const& num_samples)
+                : SamplesGenerator(num_sets)
             {
-                if (this->_side_length == 1) {
-                    this->_samples.push_back(Point2D(0.5));
+                this->_num_side = length_t(sqrt(float64(num_samples)));
+                this->_num_samples = this->_num_side * this->_num_side;
+            }
+
+            SampleList virtual generate_samples() const override
+            {
+                float64 const cell_size = 1. / this->_num_side;
+                float64 const subcell_size = 1. / this->_num_samples;
+                SampleList list;
+                list.reserve(this->_num_sets * this->_num_samples);
+                for (length_t s = 0; s < this->_num_sets; ++s) {
+                    // generate samples in one set
+                    for (length_t y = 0; y < this->_num_side; ++y) {
+                        for (length_t x = 0; x < this->_num_side; ++x) {
+                            list.push_back(Point2D(x, y) * cell_size + (Point2D(y, x) + random::uniform2D()) * subcell_size);
+                        }
+                    }
+                    length_t set_start = s * this->_num_samples;
+                    // shuffle x in one set
+                    for (length_t y = 0; y < this->_num_side; ++y) {
+                        for (length_t x = 0; x < this->_num_side; ++x) {
+                            length_t k = y + random::integer() % (this->_num_side - y);
+                            ::std::swap(
+                                list[set_start + y * this->_num_side + x].x,
+                                list[set_start + k * this->_num_side + x].x
+                            );
+                        }
+                    }
+                    // shuffle y in one set
+                    for (length_t x = 0; x < this->_num_side; ++x) {
+                        for (length_t y = 0; y < this->_num_side; ++y) {
+                            length_t k = x + random::integer() % (this->_num_side - x);
+                            ::std::swap(
+                                list[set_start + y * this->_num_side + x].x,
+                                list[set_start + y * this->_num_side + k].x
+                            );
+                        }
+                    }
                 }
-                else {
-                    this->_generate_samples();
-                }
+                return list;
             }
 
 
         private:
-            void virtual _generate_samples() override
-            {
-                float64 const cell_size = 1. / static_cast<float64>(this->_side_length);
-                float64 const subcell_size = 1. / static_cast<float64>(this->_num_samples);
-                for (length_t y = 0; y < this->_side_length; ++y) {
-                    for (length_t x = 0; x < this->_side_length; ++x) {
-                        this->_samples.push_back(Point2D(x, y) * cell_size + (Point2D(y, x) + random::uniform2D()) * subcell_size);
-                    }
-                }
-                this->_shuffle_x_coordinates();
-                this->_shuffle_y_coordinates();
-            }
-
-            void _shuffle_x_coordinates()
-            {
-                for (length_t x = 0; x < this->_side_length; ++x) {
-                    for (length_t y = 1; y < this->_side_length; ++y) {
-                        std::swap(
-                            this->_samples[(random::integer() % this->_side_length) * this->_side_length + x].x,
-                            this->_samples[y * this->_side_length + x].x
-                        );
-                    }
-                }
-            }
-
-            void _shuffle_y_coordinates()
-            {
-                for (length_t y = 0; y < this->_side_length; ++y) {
-                    length_t line_start = y * this->_side_length;
-                    for (length_t x = 1; x < this->_side_length; ++x) {
-                        std::swap(
-                            this->_samples[random::integer() % this->_side_length + line_start].y,
-                            this->_samples[x + line_start].y
-                        );
-                    }
-                }
-            }
+            length_t _num_side;
         };
 
-    } // namespace sampler
+    } // namespace samples_generators
 
 } // namespace nyas

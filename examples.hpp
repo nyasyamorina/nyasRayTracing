@@ -1,31 +1,16 @@
 /// @file examples.hpp
 #pragma once
 
-#include "utils.hpp"
-#include "common/types.hpp"
-#include "common/functions.hpp"
+#include "nyasRayTracing.hpp"
 #include "common/vec_output.hpp"
-#include "Buffer2D.hpp"
-#include "samplers/Sampler.hpp"
-#include "samplers/Regular.hpp"
-#include "samplers/PureRandom.hpp"
-#include "samplers/Jittered.hpp"
-#include "samplers/NRooks.hpp"
-#include "samplers/MultiJittered.hpp"
-#include "samplers/Hammersley.hpp"
-#include "Ray.hpp"
-#include "cameras/Camera.hpp"
-#include "cameras/Parallel.hpp"
-#include "cameras/Pinhole.hpp"
-#include <iostream>
-#include <string>
+#include <chrono>
 
-using ::std::string;
 using ::std::cout;
 using ::std::cerr;
 using ::std::endl;
 
-string const output_dir = "outputs/";
+
+std::string const output_dir = "outputs/";
 
 
 namespace nyas
@@ -33,9 +18,10 @@ namespace nyas
     /// test for fast inverse square root.
     void test_inersesqrt()
     {
+#ifdef USE_FAST_SQUARE_ROOT
         cout << "Example: test_inersesqrt" << endl;
 
-        /* some number in a dvec4 */
+        /* some number in a vec4 */
         /* also use float32 for low precision floating-point */
         vec<4, float64> exam(2., 3., 4., 5.);
         auto default_res = glm::inversesqrt(exam);
@@ -45,6 +31,7 @@ namespace nyas
         cout << "relative error: " << ((fast_res - default_res) / exam) << endl;
 
         cout << endl;
+#endif
     }
 
 
@@ -66,8 +53,9 @@ namespace nyas
         // gbuff uses float32 type to store color data, value should in range [0.f, 1.f]
         GraphicsBuffer gbuff(width, height);
         /* if buffer is not alloc correctly, then return */
-        if (!gbuff.valid())
+        if (!gbuff.valid()) {
             return;
+        }
         /* use pixel index rendering color into gbuff */
         gbuff.for_each_index(
             [] (Length2D const& index, RGBColor & pixel) {      // rendering method
@@ -79,7 +67,7 @@ namespace nyas
         /* map floating-point color to display color in display output buffer */
         // ibuff is display output buffer, it uses uint8 type to store color data, value should in range [0, 255].
         ImageBuffer ibuff = map_to_image(gbuff);
-        // save output bffer into bmp image
+        // save output buffer into bmp image
         save_bmp(output_dir + "gradient_color.bmp", ibuff);
 
         cout << endl;
@@ -102,60 +90,52 @@ namespace nyas
             return;
         }
 
-        ImageRGBColor constexpr BLACK(0);
-        ImageRGBColor constexpr WHITE(255);
-        auto clean_to_black = [&BLACK] (ImageRGBColor & pixel) { pixel = BLACK; };
+        ImageRGBColor constexpr background(0);
+        ImageRGBColor constexpr point_color(255);
 
-        auto plot_point = [&WHITE] (ImageBuffer & buff, Sampler & sampler) {
+        auto plot_and_save = [&background, &point_color] (ImageBuffer & buff, Sampler & sampler, string const& output_path) {
+            buff.for_each([&background] (ImageRGBColor & pixel) { pixel = background; });   // clean buff to background color
             for (Point2D const& sample : sampler.samples()) {
-                buff(Length2D(Point2D(buff.size()) * sample)) = WHITE;
+                buff(Length2D(Point2D(buff.size()) * sample)) = point_color;
             }
+            save_bmp(output_path, buff);                                                    // save buff into bmp image
         };
 
         // display output buffer
         ImageBuffer buff(256, 256);
+        if (!buff.valid()) {
+            return;
+        }
 
         // regular sampling
-        buff.for_each(clean_to_black);
-        samplers::Regular samp1(8);
-        plot_point(buff, samp1);
-        save_bmp(sampler_output_dir + "regular.bmp", buff);
+        Sampler samp1(samples_generators::Regular(64));
+        plot_and_save(buff, samp1, sampler_output_dir + "regular.bmp");
 
         // pure random sampling
-        buff.for_each(clean_to_black);
-        samplers::PureRandom samp2(8);
-        plot_point(buff, samp2);
-        save_bmp(sampler_output_dir + "pureRandom.bmp", buff);
+        Sampler samp2(samples_generators::PureRandom(1, 64));
+        plot_and_save(buff, samp2, sampler_output_dir + "pureRandom.bmp");
 
         // jittered sampling
-        buff.for_each(clean_to_black);
-        samplers::Jittered samp3(8);
-        plot_point(buff, samp3);
-        save_bmp(sampler_output_dir + "jittered.bmp", buff);
+        Sampler samp3(samples_generators::Jittered(1, 64));
+        plot_and_save(buff, samp3, sampler_output_dir + "jittered.bmp");
 
         // n-Rooks sampling
-        buff.for_each(clean_to_black);
-        samplers::NRooks samp4(8);
-        plot_point(buff, samp4);
-        save_bmp(sampler_output_dir + "n-Rooks.bmp", buff);
+        Sampler samp4(samples_generators::NRooks(1, 64));
+        plot_and_save(buff, samp4, sampler_output_dir + "n-Rooks.bmp");
 
         // multi-jittered sampling
-        buff.for_each(clean_to_black);
-        samplers::MultiJittered samp5(8);
-        plot_point(buff, samp5);
-        save_bmp(sampler_output_dir + "multiJittered.bmp", buff);
+        Sampler samp5(samples_generators::MultiJittered(1, 64));
+        plot_and_save(buff, samp5, sampler_output_dir + "multi-jittered.bmp");
 
         // hammersley sampling
-        buff.for_each(clean_to_black);
-        samplers::Hammersley samp6(8);
-        plot_point(buff, samp6);
-        save_bmp(sampler_output_dir + "hammersley.bmp", buff);
+        Sampler samp6(samples_generators::Hammersley(64));
+        plot_and_save(buff, samp6, sampler_output_dir + "hammersley.bmp");
 
         cout << endl;
     }
 
 
-    /// example for cameras()
+    /// example for cameras
     void example_cameras()
     {
         cout << "Example: example_cameras" << endl;
@@ -238,7 +218,7 @@ namespace nyas
         cameras::ParallelPtr camera1 = cameras::default_parallel(
             figure_size, 6., Point3D(3.5, 3.5, 4.0), Vector3D(-1.)
         );
-        render_and_output(*camera1, camera_output_dir + "parallele1.bmp");
+        render_and_output(*camera1, camera_output_dir + "parallel1.bmp");
 
         /* basic perspective projection */
         cameras::PinholePtr camera2 = cameras::default_pinhole(
@@ -259,6 +239,76 @@ namespace nyas
         );
         render_and_output(*camera4, camera_output_dir + "pinhole3.bmp");
 
+        cout << endl;
+    }
+
+
+    /// example for first rendering scenes
+    void example_simple_scenes()
+    {
+        using namespace ::std::chrono;
+        cout << "Example: example_simple_scenes" << endl;
+
+        /* set and create output directory */
+        if (!makedir(output_dir)) {
+            cerr << "Cannot create directory: '" << output_dir << '\'' << endl;
+            return;
+        }
+
+        cout << "warning: rendering will take a long time" << endl;
+
+        // In most cases, using shared pointer to manage memory is very simple */
+
+        /* build up world: add objects and set sky */
+        auto build_world = [] () -> World & {
+            // BRDFs
+            BRDFs::LambertianPtr lamb1 = make_shared<BRDFs::Lambertian>(1.f);
+            BRDFs::LambertianPtr lamb2 = make_shared<BRDFs::Lambertian>(0.3f);
+            //objects
+            objects::SpherePtr floor = make_shared<objects::Sphere>(99., Point3D(0., 3., -100.));
+            objects::SpherePtr ball  = make_shared<objects::Sphere>(1.,  Point3D(0., 3., 0.));
+            // sky                                            |-up color                 |-bottom color
+            skies::ZenithPtr sky = make_shared<skies::Zenith>(RGBColor(0.5f, 0.7f, 1.f), RGBColor(1.f));
+            // set up objects
+            floor->set_BRDF(lamb1);
+            ball->set_BRDF(lamb2);
+            // set up world and return
+            World & world = *(new World());
+            world.set_sky(sky);
+            world.add_object(floor);
+            world.add_object(ball);
+            return world;
+        };
+        World & world = build_world();
+
+        /* set camera */
+        world.set_camera(cameras::default_pinhole(
+            Length2D(640, 480), constants<float64>::axis3D::O,
+            constants<float64>::axis3D::Y, 75._deg
+        ));
+        GraphicsBuffer & figure = world.camera()->figure();
+
+        /* set sampler for all object, brdfs and camera */
+        world.set_sampler(make_shared<Sampler>(samples_generators::MultiJittered(83, 256)));
+
+        /* set ray tracer */
+        world.set_ray_tracer(make_shared<tracers::HemisphereModel>(3));
+
+        /* time rendering */
+        steady_clock::time_point time_start = steady_clock::now();
+
+        /* render scenes on figure in camera */
+        world.render_scenes();
+
+        /* show time used */
+        duration<float64> time_used = duration_cast<duration<float64>>(steady_clock::now() - time_start);
+        cout << "Rendering used time: " << time_used.count() << " seconds." << endl;
+
+        /* output image */
+        gamma_correction(figure);
+        save_bmp(output_dir + "simple_scenes.bmp", map_to_image(figure));
+
+        delete &world;
         cout << endl;
     }
 

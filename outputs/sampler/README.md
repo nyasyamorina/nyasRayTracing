@@ -1,4 +1,4 @@
-# Example ouputs
+# Example outputs
 
 example programs: [examples.hpp](https://github.com/nyasyamorina/nyasRayTracing/blob/master/examples.hpp)
 

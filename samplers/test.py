@@ -1,10 +1,8 @@
-# usig ft(Fourier Transform) to test sampler's correctness
-
-
 import numpy as np
-from numpy import pi, sin, cos, sqrt
+from numpy import pi, sin, cos, sqrt, square
 from numpy.random import random
 from matplotlib import pyplot as plt
+from mpl_toolkits import mplot3d
 
 Point2D = np.dtype([('x', "float64"), ('y', "float64")])
 
@@ -244,20 +242,40 @@ def draw_mapping_samples(sampler: Sampler):
     plt.scatter(samples[:, 0], samples[:, 1], s=POINT_SIZE)
 
 
-draw_mapping_samples(Regular(SIDE))
-plt.show()
+#draw_mapping_samples(Regular(SIDE))
+#plt.show()
+#
+#draw_mapping_samples(PureRandom(SIDE))
+#plt.show()
+#
+#draw_mapping_samples(Jittered(SIDE))
+#plt.show()
+#
+#draw_mapping_samples(NRooks(SIDE))
+#plt.show()
+#
+#draw_mapping_samples(MultiJittered(SIDE))
+#plt.show()
+#
+#draw_mapping_samples(Hammersley(SIDE))
+#plt.show()
 
-draw_mapping_samples(PureRandom(SIDE))
-plt.show()
 
-draw_mapping_samples(Jittered(SIDE))
-plt.show()
+normal = [1, 1, 1]
+r3D = sqrt(square(normal[0]) + square(normal[1]) + square(normal[2]))
+r2D = sqrt(square(normal[0]) + square(normal[1]))
+cb = normal[2] / r3D; sb = r2D / r3D
+ca = normal[0] / r2D; sa = normal[1] / r2D
 
-draw_mapping_samples(NRooks(SIDE))
-plt.show()
+sampler = Hammersley(16)
+samples1 = np.array([Sampler.map_to_hemisphere(p['x'], p['y'], 1.) for p in sampler.samples])
 
-draw_mapping_samples(MultiJittered(SIDE))
-plt.show()
+samples = np.zeros_like(samples1)
+samples[:, 0] = sa * samples1[:, 0] + ca * (cb * samples1[:, 1] + sb * samples1[:, 2])
+samples[:, 1] = -ca * samples1[:, 0] + sa * (cb * samples1[:, 1] + sb * samples1[:, 2])
+samples[:, 2] = cb * samples1[:, 2] - sb * samples1[:, 1]
 
-draw_mapping_samples(Hammersley(SIDE))
+
+ax = plt.axes(projection="3d")
+ax.scatter3D(samples[:, 0], samples[:, 1], samples[:, 2])
 plt.show()
